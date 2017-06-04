@@ -1,9 +1,0 @@
-package parser;
-
-import java.util.List;
-
-public interface Parser {
-	List<Token> parse(Error err, List<Token> ent);
-
-	public final static Parser eps = (err, ent) -> ent; 
-}
