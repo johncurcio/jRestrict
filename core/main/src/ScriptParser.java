@@ -13,10 +13,10 @@
  * requires  := "requires"  "{" clauses+  "}"
  * encloses  := "encloses"  "{" clauses+  "}"
  * prohibits := "prohibits" "{" clauses+  "}"
- * clauses   := (clause-type ";" | clause-returntype ";" | clause-argtype ";" | clause-vartype ";" | clause-operator ";" | clause-modifier ";" | clause-import ";" | clause-exception ";" | clause-loop ";" | clause-branch ";")
+ * clauses   := (clause-type | clause-returntype | clause-argtype | clause-vartype | clause-operator | clause-modifier | clause-import | clause-exception | clause-loop | clause-branch)
  * 
- * clause-type       := "type:" java-type ("," java-type)*
- * clause-returntype := "returntype:" java-type ("," java-type)*
+ * clause-type       := "type:" java-type ("," java-type)* ";" 
+ * clause-returntype := "returntype:" java-type ("," java-type)* ";" 
  * java-type         := ("int" | "double" | "boolean" | "float" | "char")
  * 
  * comments  := '--'[^\n]*
@@ -43,17 +43,20 @@ public class ScriptParser {
 	public static Parser<Symbol> REQUIRES  = seqr(sp, kw("requires", "re"));
 	public static Parser<Symbol> ENCLOSES  = seqr(sp, kw("encloses", "en"));
 	public static Parser<Symbol> PROHIBITS = seqr(sp, kw("prohibits", "pb"));
-	//public static Parser<Symbol> TYPE      = seqr(sp, kw("type:", "tp"));
-	//public static Parser<Symbol> RETTYPE   = seqr(sp, kw("returntype:", "rt"));
+	
+	public static Parser<Symbol> TYPE      = seqr(sp, kw("type", "tp"));
+	public static Parser<Symbol> RETTYPE   = seqr(sp, kw("returntype", "rt"));
 	
 	public static Parser<Symbol> keywords  = choice(kw("files", "fi"), kw("requires", "req"), 
-			                                        kw("encloses", "en"), kw("prohibits", "pb"));
+			                                        kw("encloses", "en"), kw("prohibits", "pb"),
+			                                        kw("type", "tp"), kw("returntype", "rt"));
 
 	/*Defining symbols which will be used in my language*/
 	public static Parser<Symbol> lbracket = seqr(sp, token(lit("{"), "{"));	
 	public static Parser<Symbol> rbracket = seqr(sp, token(lit("}"), "}"));	
 	public static Parser<Symbol> semicol  = seqr(sp, token(lit(";"), ";"));
 	public static Parser<Symbol> colon    = seqr(sp, token(lit(","), ","));
+	public static Parser<Symbol> dots     = seqr(sp, token(lit(":"), ":"));
 	
 	/*Defining instructions for my language*/
 	public static Parser<Symbol> filename        = seqr(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java"), semicol), "filename"));
@@ -61,14 +64,23 @@ public class ScriptParser {
 			fun(filename, (n) -> new mast.Files(n.pos, n.texto)), rbracket, (r1, r2, r3, r4) -> r3);//this should be a list like Actions if we want more than one filename
 	
 	/*Defining my java accepted dictionaries*/
-	//public static Parser<Symbol> javatype        = choice(seqr(sp, token(lit("int"), "int")), seqr(sp, token(lit("boolean"), "boolean")), seqr(sp, token(lit("double"), "double")));
+	public static Parser<Symbol> javatype    = choice(
+													  seqr(sp, token(lit("int"), "int")), 
+			                                          seqr(sp, token(lit("boolean"), "boolean")), 
+			                                          seqr(sp, token(lit("double"), "double")), 
+			                                          seqr(sp, token(lit("float"), "float")),
+			                                          seqr(sp, token(lit("char"), "char"))
+			                                          );
 	
 	/*Defining my clauses*/
-	//clause-type       := "type:" java-type ("," java-type)*
-	//public static Parser<mast.ClauseType> clausetype   = seq(TYPE, javatype, star(seqr(colon, javatype)), 
-	//		                                                 (type, javat, star) -> new mast.ClauseType());
-	//public static Parser<Symbol> clauses         = choice(kw("files", "fi"), kw("requires", "req"));
-
+	//these shouldn't be void
+	public static Parser<Void> clausetype    = seq(TYPE, dots, javatype, star(seqr(colon, javatype)), semicol);
+	public static Parser<Void> clauserettype = seq(RETTYPE, dots, javatype, star(seqr(colon, javatype)), semicol);
+	public static Parser<Void> clauses       = choice(clausetype, clauserettype);
+	
+	
+	/*Defining the main clause SCRIPT*/
+	public static Parser<Void> script = choice(seq(files, clausetype), seq(clausetype, files));
 	
 	/*public static Parser<Void> comentario = seq(lit("--"), star(cls((c) -> c != '\n')));
 	public static Parser<Void> espaco = choice(plus(cls(Character::isWhitespace)), comentario);
