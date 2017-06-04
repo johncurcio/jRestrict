@@ -1,0 +1,14 @@
+package mast;
+
+public class Action extends Node {
+	public final String nome;
+	
+	public Action(int pos, String nome) {
+		super(pos);
+		this.nome = nome;
+	}
+	
+	public String toString() {
+		return nome;
+	}
+}

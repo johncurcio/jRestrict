@@ -1,0 +1,105 @@
+package parser;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+
+public class Loader {
+	public static Parser star(Parser p) {
+		return new Star(p);
+	}
+
+	public static Parser plus(Parser p) {
+		return seq(p, star(p));
+	}
+
+	public static Parser opt(Parser p) {
+		return Loader.choice(p, eps);
+	}
+	
+	public final static Parser eps = (err, ent) -> ent;
+	
+	public static Parser token(int tipo) {
+		return new TokenParser(eps, tipo);
+	}
+	
+	public static Parser token(int tipo, String pre) {
+		return new TokenParser((err, ent) -> ent.get(0).texto.startsWith(pre) ? ent.subList(1, ent.size()) : ent, tipo);
+	}
+
+	public static Parser token(int tipo, int tipoErr) {
+		return new TokenParser((err, ent) -> ent.get(0).tipo == tipoErr ? ent.subList(1, ent.size()) : ent, tipo);
+	}
+
+	public static Parser seq(Parser p1, Parser p2) {
+		return new Seq(p1, p2);
+	}
+
+	public static Parser seq(Parser p1, Parser p2, Parser p3) {
+		return new Seq(p1, new Seq(p2, p3));
+	}
+
+	public static Parser seq(Parser p1, Parser p2, Parser p3, Parser p4) {
+		return new Seq(p1, new Seq(p2, new Seq(p3, p4)));
+	}
+
+	public static Parser seq(Parser p1, Parser p2, Parser p3, Parser p4, Parser p5) {
+		return new Seq(p1, new Seq(p2, new Seq(p3, new Seq(p4, p5))));
+	}
+
+	public static Parser choice(Parser p1, Parser p2) {
+		return new OrdChoice(p1, p2);
+	}
+
+	public static Parser choice(Parser p1, Parser p2, Parser p3) {
+		return new OrdChoice(p1, new OrdChoice(p2, p3));
+	}
+
+	public static Parser choice(Parser p1, Parser p2, Parser p3, Parser p4) {
+		return new OrdChoice(p1, new OrdChoice(p2, new OrdChoice(p3, p4)));
+	}
+
+	public static Parser choice(Parser p1, Parser p2, Parser p3, Parser p4, Parser p5) {
+		return new OrdChoice(p1, new OrdChoice(p2, new OrdChoice(p3, new OrdChoice(p4, p5))));
+	}
+
+	public static Parser lazy(Supplier<Parser> sp) {
+		return new LazyParser(sp);
+	}
+	
+	//@TODO: learn what is variable and add its function if needed
+	
+	public static List<String> run(Lexer lex, Parser p, List<Token> ent) {
+		List<String> erros = new ArrayList<>();
+		Error err = new Error();
+		while(true) {
+			try {
+				List<Token> suf = p.parse(err, ent);
+				if(suf.size() != 0 && suf.get(0).tipo != 0) {
+					if(!error(lex, ent, erros, err)) break;
+					err.recover();
+				} else break;
+			} catch(RuntimeException f) {
+				if(!error(lex, ent, erros, err)) break;
+				err.recover();
+			}
+		}
+		return erros;
+	}
+
+	public static boolean error(Lexer lex, List<Token> ent, List<String> erros, Error err) {
+		int pos = ent.size() - err.pos;
+		String[] ntipos = new String[err.tipos.size()];
+		int i = 0;
+		for(int tipo: err.tipos) {
+			ntipos[i++] = lex.nomeToken(tipo);
+		}
+		System.out.println(ent.size());
+		String msg = "erro de sintaxe na posicao " + pos + " com o token " + ent.get(pos).texto + 
+				", era esperado " + (ntipos.length > 0 ? String.join(", ", ntipos) : "final da entrada");
+		System.out.println(msg);
+		if(erros.contains(msg)) return false;
+		else return erros.add(msg);
+	}
+}

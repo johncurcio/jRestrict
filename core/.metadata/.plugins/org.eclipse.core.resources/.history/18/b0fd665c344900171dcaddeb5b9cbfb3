@@ -1,0 +1,15 @@
+String jscript = ""  
+		     + " file: Main.java;\n"
+		     + " encloses: ;\n"
+			 + " requires: ;\n"
+			 +  "prohibts: ;\n";
+
+String inijscript = " resetEvents -- comments about stuff";
+peg.peg.run(ScriptParser.machine, inijscript);
+
+
+
+String jscript = ""  
+	     + " files{ Main.java; }\n";
+
+peg.peg.run(ScriptParser.machine, inijscript);

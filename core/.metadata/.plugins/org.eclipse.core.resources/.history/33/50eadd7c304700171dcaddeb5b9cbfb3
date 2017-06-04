@@ -1,0 +1,14 @@
+
+/**
+ * 
+ * @author joao curcio
+ * 
+ * Incremental Grammar:
+ * 
+ * script := file
+ * 
+ * 
+ */
+public class JRestrictTest {
+
+}

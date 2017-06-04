@@ -1,0 +1,9 @@
+String jscript = ""  
+		     + " file: Main.java;\n"
+		     + " encloses: ;\n"
+			 + " requires: ;\n"
+			 +  "prohibts: ;\n";
+String inijscript = ""  
+	     + " -- comments about stuff";
+peg.peg.run(ScriptParser.comments, entradaCorr); 
+

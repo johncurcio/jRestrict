@@ -1,0 +1,15 @@
+
+/**
+ * 
+ * @author joao curcio
+ * 
+ * Incremental Grammar:
+ * 
+ * script := file
+ * 
+ * filename := NAME ".java"
+ * file     := "file:" filename ";"
+ */
+public class JRestrictTest {
+
+}

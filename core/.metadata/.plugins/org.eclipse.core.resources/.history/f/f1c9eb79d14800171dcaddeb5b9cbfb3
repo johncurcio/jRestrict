@@ -1,0 +1,18 @@
+package mast;
+
+import java.util.List;
+
+public class Machine {
+	public final List<Event> events;
+	public final List<Command> commands;
+	public final List<ResetEvent> revents;
+	public final List<State> states;
+	
+	public Machine(List<Event> events, List<Command> commands,
+			List<ResetEvent> revents, List<State> states) {
+		this.events = events;
+		this.commands = commands;
+		this.revents = revents;
+		this.states = states;
+	}
+}

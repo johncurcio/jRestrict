@@ -1,0 +1,58 @@
+import java.util.ArrayList;
+import java.util.List;
+import parser.*;
+import static parser.Loader.*;
+
+/**
+ * 
+ * @author joao curcio
+ * 
+ * Incremental Grammar:
+ * 
+ * script       := (file main-clauses | main-clauses file) 
+ * main-clauses := requires? | encloses? | prohibits?
+ * 
+ * file      := "file:" NAME ".java" ";"
+ * requires  := "requires:"   ";"
+ * encloses  := "encloses:"   ";"
+ * prohibits := "prohibits:"  ";"
+ * 
+ */
+public class JRestrictTest {
+	
+	public static final int NAME        = 1;
+	public static final int FILE        = 3;
+	public static final int REQUIRES    = 4;
+	public static final int ENCLOSES    = 5;
+	public static final int PROHIBITS   = 6;
+	public static final int FILENAME    = 7;
+	
+	public static Parser script;
+	public static Parser file;
+	public static Parser requires;
+	public static Parser encloses;
+	public static Parser prohibits;
+	
+	public static List<String> test(){
+		script    = lazy(() -> choice(file, opt(requires), opt(encloses), opt(prohibits)));
+		file      = lazy(() -> seq(token(FILE), token(':'), token(FILENAME), token(';')));
+		requires  = lazy(() -> seq(token(REQUIRES), token(':'), token(';'))); //missing an argument for now
+		prohibits = lazy(() -> seq(token(PROHIBITS), token(':'), token(';')));
+		encloses  = lazy(() -> seq(token(ENCLOSES), token(':'), token(';')));
+		
+		String jscript = 
+			   "requires: ;\n"
+			 +  "encloses: ;\n"
+			 +  "prohibits: ;\n"
+			 + "file: Main.java;\n";
+		
+		List<Token> ent = new ArrayList<>();
+		ScriptLexer sl = new ScriptLexer(jscript);
+		Token tok;
+		do {
+			tok = sl.proximoToken();
+			ent.add(tok);
+		} while(tok.tipo != 0);
+		return run(sl, script, ent);
+	}
+}

@@ -1,0 +1,23 @@
+import java.util.List;
+
+/**
+ * 
+ * @author joao curcio
+ * 
+ * Incremental Grammar:
+ * 
+ * script := file
+ * 
+ * filename := NAME ".java"
+ * file     := "file:" filename ";"
+ * comments := "--"[^\n]*
+ * 
+ */
+public class JRestrictTest {
+	
+	public static List<String> test(){
+		script = lazy(() -> )
+		
+		return null;
+	}
+}

@@ -1,0 +1,15 @@
+package mast;
+
+public class Files extends Node {
+	
+	public final String filename;
+	
+	public Files(int pos) {
+		super(pos);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {
+		return visitor.visit(this, ctx);
+	}
+}

@@ -1,0 +1,5 @@
+package mast;
+
+public class Requires extends Node {
+
+}

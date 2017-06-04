@@ -1,0 +1,11 @@
+String jscript = ""  
+		     + " file: Main.java;\n"
+		     + " encloses: ;\n"
+			 + " requires: ;\n"
+			 +  "prohibts: ;\n";
+String inijscript = ""  
+	     + " -- comments about stuff";
+peg.Pair<mast.Machine, java.util.List<String>> res = peg.peg.run(StateMachineParser.machine, entradaCorr); 
+
+return JRestrictTest.test();
+

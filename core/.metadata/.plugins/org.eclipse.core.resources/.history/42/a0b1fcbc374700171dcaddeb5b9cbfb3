@@ -1,0 +1,37 @@
+import java.util.List;
+
+/**
+ * 
+ * @author joao curcio
+ * 
+ * Incremental Grammar:
+ * 
+ * script   := file requires? encloses? prohibits?
+ * 
+ * file      := "file:" NAME ".java" ";"
+ * requires  := "requires:"   ";"
+ * encloses  := "encloses:"   ";"
+ * prohibits := "prohibits:"  ";"
+ * 
+ */
+public class JRestrictTest {
+	
+	public static final int JAVA = 0;
+	public static final int NAME = 1;
+	public static final int FILE = 2;
+	public static final int REQUIRES = 3;
+	
+	public static Parser script;
+	public static Parser file;
+	public static Parser requires;
+	public static Parser encloses;
+	public static Parser prohibits;
+	
+	public static List<String> test(){
+		script   = lazy(() -> seq(file, oneOrZero(requires), oneOrZero(encloses), oneOrZero(prohibits)));
+		file     = lazy(() -> seq(token(FILE), token(NAME), token(JAVA), token(';')));
+		requires = lazy(() -> seq(token(REQUIRES), token(';')));
+		
+		return null;
+	}
+}

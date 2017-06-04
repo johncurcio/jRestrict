@@ -1,0 +1,94 @@
+package parser;
+
+import java.util.HashMap;
+
+public class ScriptLexer extends Lexer {
+	public static final int EOF         = 0;
+	public static final int NOME        = 1;
+	public static final int NUM         = 2;
+	public static final int FILE        = 3;
+	public static final int REQUIRES    = 4;
+	public static final int ENCLOSES    = 5;
+	public static final int PROHIBITS   = 6;
+	public static final int FILENAME    = 7;
+	
+	public static final HashMap<String, Integer> reservadas;
+	
+	static {
+		reservadas = new HashMap<>();
+		reservadas.put("file", FILE);
+		reservadas.put("requires", REQUIRES);
+		reservadas.put("encloses", ENCLOSES);
+		reservadas.put("prohibits", PROHIBITS);
+	}
+
+	public static final String[] nomesToken = new String[] {
+			"EOF", "nome", "num", "file", "requires", "encloses", "prohibits"
+	};
+	
+	public ScriptLexer(String _ent) {
+		super(_ent);
+	}
+
+	public void comentario() {
+		match('-');
+		match('-');
+		while(match(c -> c != Lexer.EOF && c != '\n')) {}
+	}
+	
+	public Token filename(int p){
+		String t = texto(p);
+		while(match(Character::isLetter)) {}
+		t += texto(p);
+		return new Token(FILENAME, t, p);
+	}
+	
+	public Token identificador() {
+		int p = pos;
+		while(match(Character::isLetter)) {}
+		if (peek(1) == '.'){
+			return filename(p);
+		}
+		String t = texto(p);
+		if(reservadas.containsKey(t)){ 
+			return new Token(reservadas.get(t), t, p);
+		}else{ 
+			return new Token(NOME, t, p);
+		}
+	}
+
+	public Token num() {
+		int p = pos;
+		while(match(Character::isDigit)) {}
+		String t = texto(p);
+		return new Token(NUM, t, p);
+	}
+
+	@Override
+	public Token proximoToken() {
+		while(c != Lexer.EOF) {
+			if(c == '-' && peek(1) == '-') {
+				comentario();
+				continue;
+			}
+			if(c == ' ' || c == '\n' || c == '\r' || c == '\t') {
+				skip();
+				continue;
+			}
+			if((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) return identificador();
+			if(c >= '0' && c <= '9') return num();
+			Token t = new Token(c, "" + c, pos);
+			skip();
+			return t;
+		}
+		return new Token(EOF, "<<EOF>>", pos);
+	}
+
+	@Override
+	public String nomeToken(int tipo) {
+		if(tipo < nomesToken.length) return nomesToken[tipo];
+		else return "" + (char)tipo;
+	}
+
+}
+

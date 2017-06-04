@@ -1,0 +1,19 @@
+package parser;
+
+public class Literal implements Parser {
+	public final String lit;
+	
+	public Literal(String lit) {
+		this.lit = lit;
+	}
+
+	@Override
+	public String parse(Error err, String ent) {
+		if(ent.startsWith(lit)) {
+			return ent.substring(lit.length());
+		} else {
+			throw new Falha();
+		}
+	}
+}
+

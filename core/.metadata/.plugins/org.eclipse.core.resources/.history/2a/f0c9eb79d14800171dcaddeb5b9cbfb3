@@ -1,0 +1,21 @@
+package mast;
+
+import java.util.List;
+
+public class State extends Node {
+	public final String nome;
+	public final List<Action> actions;
+	public final List<Transition> transitions;
+	
+	public State(int pos, String nome, List<Action> actions,
+			List<Transition> transitions) {
+		super(pos);
+		this.nome = nome;
+		this.actions = actions;
+		this.transitions = transitions;
+	}
+
+	public String toString() {
+		return "state " + nome;
+	}
+}
