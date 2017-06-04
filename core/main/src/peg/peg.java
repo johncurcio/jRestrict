@@ -193,8 +193,12 @@ public class peg {
 		for(String tipo: err.tipos) {
 			ntipos[i++] = tipo;
 		}
-		String msg = "erro de sintaxe na posicao " + pos + "(\"" + ent.substring(pos, pos + 10) + "\")" + 
-				", era esperado " + (ntipos.length > 0 ? String.join(", ", ntipos) : "final da entrada");
+		int endOfToken = (ent.indexOf(" ", pos) == -1 ? ent.indexOf("\n", pos): ent.indexOf(" ", pos));
+		int beginOfToken = ent.lastIndexOf(" ", pos);
+		endOfToken = (endOfToken == -1 ? ent.length()-1 : endOfToken);
+		beginOfToken = (beginOfToken == -1 ? 0 : beginOfToken);
+		String msg = "erro de sintaxe na posicao " + pos + " (\"" + ent.substring(beginOfToken, endOfToken+1) + "\")" + 
+				", era esperado " + (ntipos.length > 0 ? String.join(", ", ntipos) : " final da entrada");
 		System.out.println(msg);
 		if(erros.contains(msg)) return false;
 		else return erros.add(msg);
