@@ -39,16 +39,17 @@ A special clause ``file: <name of file>;`` has been added to the language, so th
 ## jRestrict grammar
 
 ```
-script    := file requires? encloses? prohibits?
+script    := (file mainc | mainc file) 
+mainc     := (encloses? requires?) | (prohibits? requires?)
 
-filename  := identifier ".java"
-file      := "file:" filename ";"
-requires  := "requires:" clause+ ";"
-encloses  := "encloses:" clause+ ";"
-prohibits := "prohibits:" clause+ ";"
+filename  := [a-zA-Z]+ ".java" ";"
+file      := "files"     "{" filename+ "}"
+requires  := "requires"  "{" clauses+  "}"
+encloses  := "encloses"  "{" clauses+  "}"
+prohibits := "prohibits" "{" clauses+  "
 comments  := "--"[^\n]*
 
-clause := (clause-type | clause-returntype | clause-argtype | clause-vartype | clause-operator | clause-modifier | clause-import | clause-exception | clause-loop | clause-branch)
+clauses   := (clause-type ";" | clause-returntype ";" | clause-argtype ";" | clause-vartype ";" | clause-operator ";" | clause-modifier ";" | clause-import ";" | clause-exception ";" | clause-loop ";" | clause-branch ";")
 
 clause-type       := "type:" java-type ("," java-type)* 
 clause-returntype := "returntype:" java-type ("," java-type)* 
