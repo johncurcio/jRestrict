@@ -3,13 +3,19 @@ package mast;
 public class StringVisitor implements Visitor<Void, String> {
 
 	@Override
-	public String visit(Action ac, Void ctx) {
-		return ac.nome;
+	public String visit(Requires req, Void ctx) {
+		return req.clause;
 	}
 	
 	@Override
 	public String visit(Files fi, Void ctx) {
 		return fi.filename;
+	}
+	
+	//@TODO: remove these
+	@Override
+	public String visit(Action ac, Void ctx) {
+		return ac.nome;
 	}
 	
 	@Override

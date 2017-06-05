@@ -14,12 +14,18 @@ public class CollectVisitor implements Visitor<Void, Void> {
 	}
 	
 	@Override
-	public Void visit(Action ac, Void ctx) {
+	public Void visit(Files fi, Void ctx) {
 		return null;
 	}
-	
+
 	@Override
-	public Void visit(Files fi, Void ctx) {
+	public Void visit(Requires req, Void ctx) {
+		return null;
+	}
+
+	//@TODO: remove these visitors
+	@Override
+	public Void visit(Action ac, Void ctx) {
 		return null;
 	}
 
@@ -28,7 +34,7 @@ public class CollectVisitor implements Visitor<Void, Void> {
 		if(commands.resolve(cmd.nome) == null) {
 			commands.define(new CommandSymbol(cmd.nome, cmd.codigo));
 		} else {
-			errors.add("comando " + cmd.nome + " redeclarado na posição " + cmd.pos);
+			errors.add("comando " + cmd.nome + " redeclarado na posicao " + cmd.pos);
 		}
 		return null;
 	}

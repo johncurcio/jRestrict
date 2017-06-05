@@ -1,11 +1,31 @@
-String jscript =" anytype: int, boolean; ";
+String jscript =" files {Main.java;} ";
 peg.Pair<mast.Files, java.util.List<String>> res = peg.peg.run(ScriptParser.files, jscript);
+mast.CollectVisitor cv = new mast.CollectVisitor(res.y);
+//mast.BindingVisitor bv = new mast.BindingVisitor(res.y);
+res.x.visit(cv, null);
+//res.x.visit(bv, null);
+return res;
 
+String jscript ="files { Main.java; }\n type: int, boolean;";
+peg.Pair<Void, java.util.List<String>> res = peg.peg.run(ScriptParser.script, jscript);
 
-String jscript ="type: int, boolean;";
-peg.Pair<Void, java.util.List<String>> res = peg.peg.run(ScriptParser.clauses, jscript);
-
-
+String jscript = ""
+		+ " files {"
+		+ "    Main.java;"
+		+ " }\n"
+		+ ""
+		+ " # declaring all clauses that MUST be on my java file\n"
+		+ " requires{"
+		+ "    type: int, boolean, float;"
+		+ "    returntype: int;"
+		+ " }\n"
+		+ ""
+		+ " prohibits{}\n"
+		+ ""
+		+ " encloses{"
+		+ "    type: int, boolean, float;"
+		+ " }\n";
+peg.Pair<Void, java.util.List<String>> res = peg.peg.run(ScriptParser.script, jscript);
 mast.CollectVisitor cv = new mast.CollectVisitor(res.y);
 //mast.BindingVisitor bv = new mast.BindingVisitor(res.y);
 res.x.visit(cv, null);

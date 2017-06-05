@@ -12,7 +12,19 @@ public class BindingVisitor implements Visitor<Void, Void> {
 	public BindingVisitor(List<String> errors) {
 		this.errors = errors;
 	}
-	
+
+	//@TODO: assert correctness of these
+	@Override
+	public Void visit(Files fi, Void ctx) {
+		return null;
+	}
+
+	@Override
+	public Void visit(Requires req, Void ctx) {
+		return null;
+	}
+
+	//@TODO: remove these
 	@Override
 	public Void visit(Action ac, Void ctx) {
 		ac.symbol = commands.resolve(ac.nome);
@@ -22,11 +34,6 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		return null;
 	}
 	
-	@Override
-	public Void visit(Files fi, Void ctx) {
-		return null;
-	}
-
 	@Override
 	public Void visit(Command cmd, Void ctx) {
 		return null;
