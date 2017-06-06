@@ -3,21 +3,10 @@ package mast;
 public class StringVisitor implements Visitor<Void, String> {
 
 	@Override
-	public String visit(Requires req, Void ctx) {
-		return req.toString();
-	}
-	
-	@Override
-	public String visit(Files fi, Void ctx) {
-		return fi.filename;
-	}
-	
-	//@TODO: remove these
-	@Override
 	public String visit(Action ac, Void ctx) {
 		return ac.nome;
 	}
-	
+
 	@Override
 	public String visit(Command cmd, Void ctx) {
 		return cmd.nome + " " + cmd.codigo;

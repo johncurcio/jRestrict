@@ -1,0 +1,15 @@
+machine := events revents? commands state+
+events := "events" event+ "end"
+event := nome codigo
+commands := "commands" command+ "end"
+command := nome codigo
+revents := "resetEvents" nome+ "end"
+state := "state" nome actions? transition* "end"
+actions := "actions" "{" nome+ "}"
+transition := nome "=>" nome
+
+reservada   := ('events' | 'state' | 'end' | 'action') ![a-zA-Z]
+nome        := !reservada [a-zA-Z]+
+codigo      := !nome [A-Z0-9][A-Z0-9][A-Z0-9][A-Z0-9]
+comentario  := '--'[^\n]*
+espaco      := [ \n\r\t]+ | comentario

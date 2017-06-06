@@ -28,6 +28,7 @@ import static peg.peg.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import mast.Requires;
 import peg.Parser;
 import peg.Symbol;
 
@@ -71,20 +72,19 @@ public class ScriptParser {
 			                                          );
 	
 	/*Defining my clauses*/
-	//these shouldn't be void
-	public static Parser<Void> clausetype    = seq(TYPE, dots, javatype, star(seqr(colon, javatype)), semicol);
-	public static Parser<Void> clauserettype = seq(RETTYPE, dots, javatype, star(seqr(colon, javatype)), semicol);
-	public static Parser<Void> clauses       = choice(clausetype, clauserettype);
+	//List<Symbol> because javatype is Symbol
+	public static Parser<List<Symbol>> clausetype    = seq(TYPE, dots, listof(javatype, colon), semicol, (r1, r2, r3, r4) -> r3);
+	public static Parser<List<Symbol>> clauserettype = seq(RETTYPE, dots, listof(javatype, colon), semicol, (r1, r2, r3, r4) -> r3);
+	public static Parser<List<Symbol>> clauses       = choice(clausetype, clauserettype);
 	
 	/*Defining the three main commands*/
-	//@TODO: clauses are void, therefore we can't create stuff here
 	//@TODO: generalize mast.Requires to work with the tree main clauses because they're identical!
 	public static Parser<List<mast.Requires>> requires   = seq(REQUIRES, lbracket, 
-			star(fun(clauses, (n) -> new mast.Requires(1, "clause"))), rbracket, (r1,r2,r3,r4) -> r3);
+			star(fun(clauses, (n) -> new mast.Requires(1, n))), rbracket, (r1, r2, r3, r4) -> r3);
 	public static Parser<List<mast.Requires>> prohibits  = seq(PROHIBITS, lbracket, 
-			star(fun(clauses, (n) -> new mast.Requires(1, "clause"))), rbracket, (r1,r2,r3,r4) -> r3);
+			star(fun(clauses, (n) -> new mast.Requires(1, n))), rbracket, (r1, r2, r3, r4) -> r3);
 	public static Parser<List<mast.Requires>> encloses   = seq(ENCLOSES, lbracket, 
-			star(fun(clauses, (n) -> new mast.Requires(1, "clause"))), rbracket, (r1,r2,r3,r4) -> r3);
+			star(fun(clauses, (n) -> new mast.Requires(1, n))), rbracket, (r1, r2, r3, r4) -> r3);
 	
 	/*Defining the main clause SCRIPT*/
 	public static Parser<Void> script = seq(files, opt(requires), opt(prohibits), opt(encloses));

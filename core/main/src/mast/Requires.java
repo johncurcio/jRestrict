@@ -1,18 +1,20 @@
 package mast;
 
+import java.util.List;
+
 public class Requires extends Node {
-	public final String clause;
+	public final List<peg.Symbol> clauses;
 	
 	//shoudn't be ClauseSymbol!!!
 	Symbol symbol;
 	
-	public Requires(int pos, String clause) {
+	public Requires(int pos, List<peg.Symbol> clauses) {
 		super(pos);
-		this.clause = clause;
+		this.clauses = clauses;
 	}
 	
 	public String toString() {
-		return clause;
+		return clauses.toString();
 	}
 	
 	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {

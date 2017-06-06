@@ -11,22 +11,22 @@ peg.Pair<Void, java.util.List<String>> res = peg.peg.run(ScriptParser.script, js
 
 String jscript = ""
 		+ " files {"
-		+ "    Main.java;"
+		+ "    Main.java;\n"
 		+ " }\n"
 		+ ""
 		+ " # declaring all clauses that MUST be on my java file\n"
 		+ " requires{"
-		+ "    type: int, boolean, float;"
-		+ "    returntype: int;"
+		+ "    type: int, boolean, float;\n"
+		+ "    returntype: int, char;\n"
 		+ " }\n"
 		+ ""
 		+ " prohibits{}\n"
 		+ ""
 		+ " encloses{"
-		+ "    type: int, boolean, float;"
+		+ "    type: int, boolean, float;\n"
 		+ " }\n";
 peg.Pair<Void, java.util.List<String>> res = peg.peg.run(ScriptParser.script, jscript);
-mast.CollectVisitor cv = new mast.CollectVisitor(res.y);
+An exception occurred during evaluation:  java.lang.StackOverflowErrormast.CollectVisitor cv = new mast.CollectVisitor(res.y);
 //mast.BindingVisitor bv = new mast.BindingVisitor(res.y);
 res.x.visit(cv, null);
 //res.x.visit(bv, null);
