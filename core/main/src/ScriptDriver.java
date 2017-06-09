@@ -30,6 +30,10 @@ public class ScriptDriver {
 	public static void main(String[] args) throws IOException {
 		String fname = args[0];
 		peg.Pair<mast.Script, List<String>> m = read(fname);
-		System.out.println(m.toString());
+		System.out.println(">>>>>>>>>> DEBUG <<<<<<<<<<<");
+		System.out.println("> Files: " + m.x.files.toString());
+		System.out.println("> Requires: " + m.x.requirements.toString());
+		System.out.println("> Encloses: " + m.x.enclosement.toString());
+		System.out.println("> Prohibits: " + m.x.prohibitions.toString());
 	}
 }

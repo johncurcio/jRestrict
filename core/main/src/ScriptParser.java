@@ -65,7 +65,7 @@ public class ScriptParser {
 	public static Parser<Symbol> dots     = seqr(sp, token(lit(":"), ":"));
 	
 	/*Defining instructions for my language*/
-	public static Parser<Symbol> filename    = seqr(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java"), semicol), "filename"));
+	public static Parser<Symbol> filename    = seq(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java")), "filename"), semicol, (r1,r2,r3)->r2);
 	public static Parser<List<CommandFiles>> files   = seq(FILES, lbracket, 
 			star(fun(filename, (n) -> new CommandFiles(n.pos, n.texto))), rbracket, (r1, r2, r3, r4) -> r3);
 	
