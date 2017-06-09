@@ -1,8 +1,6 @@
 package mast;
 
 public class CommandEncloses extends Commands {
-	//@TODO: ver pra que isso serve!
-	Symbol symbol;
 	
 	public CommandEncloses(int pos, Clause clause) {
 		super(pos, clause);

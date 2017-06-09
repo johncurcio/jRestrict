@@ -1,0 +1,20 @@
+ files {
+    Main.java;
+    Main.java;
+ }
+
+ # declaring all clauses that MUST be on my java file
+ requires{
+    type: int, boolean, float;
+    returntype: void;
+ }
+
+ prohibits{
+    modifier: public, static, class;
+    loop: while, break;
+    vartype: double;
+}
+
+ encloses{
+    type: int, boolean, float;
+}

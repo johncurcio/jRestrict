@@ -1,8 +1,6 @@
 package mast;
 
 public class CommandProhibits extends Commands {
-	//@TODO: ver pra que isso serve!
-	Symbol symbol;
 	
 	public CommandProhibits(int pos, Clause clause) {
 		super(pos, clause);

@@ -12,13 +12,18 @@
  * requires  := "requires"  "{" clauses*  "}"
  * encloses  := "encloses"  "{" clauses*  "}"
  * prohibits := "prohibits" "{" clauses*  "}"
- * clauses   := (clause-type | clause-returntype | clause-argtype | clause-vartype | clause-operator | clause-modifier | clause-import | clause-exception | clause-loop | clause-branch)
+ * clauses   := (clause-type | clause-returntype | clause-vartype | clause-operator | clause-modifier | clause-import | clause-exception | clause-loop | clause-branch)
  * 
  * clause-type       := "type:" java-type ("," java-type)* ";" 
  * clause-returntype := "returntype:" java-type ("," java-type)* ";" 
- * clause-argtype    := "argtype:" java-type ("," java-type)* ";" 
  * clause-vartype    := "vartype:" java-type ("," java-type)* ";" 
- * java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long")
+ * java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long" | "void")
+ * clause-modifier   := "modifier:" java-modifier ("," java-modifier)* ";"
+ * java-modifier     := ("public" | "private" | "protected" | "static" | "final" | "abstract" | "volatile" | "synchronized" | "class")
+ * clause-loop       := "loop:" java-loop ("," java-loop)* ";" 
+ * java-loop         := ("while" | "do" | "for" | "break" | "continue")
+ * clause-branch     := "branch:" java-branch ("," java-branch)* ";" 
+ * java-branch       := ("switch" | "if")
  * 
  * comments  := '#'[^\n]*
  * spaces    := [ \n\r\t]+ | comments
@@ -29,15 +34,7 @@ import static peg.peg.*;
 
 import java.util.List;
 
-import mast.CommandRequires;
-import mast.CommandProhibits;
-import mast.CommandEncloses;
-import mast.Commands;
-import mast.Script;
-import mast.ClauseType;
-import mast.Clause;
-import mast.JavaArgs;
-import mast.JavaType;
+import mast.*;
 import peg.Parser;
 import peg.Symbol;
 
@@ -54,12 +51,11 @@ public class ScriptParser {
 	public static Parser<Symbol> PROHIBITS = seqr(sp, kw("prohibits", "pb"));
 	public static Parser<Symbol> TYPE      = seqr(sp, kw("type", "tp"));
 	public static Parser<Symbol> RETTYPE   = seqr(sp, kw("returntype", "rt"));
-	public static Parser<Symbol> VARTYPE   = seqr(sp, kw("argtype", "at"));
-	public static Parser<Symbol> ARGTYPE   = seqr(sp, kw("vartype", "vt"));
+	public static Parser<Symbol> VARTYPE   = seqr(sp, kw("vartype", "vt"));
+	public static Parser<Symbol> MODIFIER  = seqr(sp, kw("modifier", "md"));
+	public static Parser<Symbol> LOOP      = seqr(sp, kw("loop", "lp"));
 	
-	public static Parser<Symbol> keywords  = choice(kw("files", "fi"), kw("requires", "req"), 
-			                                        kw("encloses", "en"), kw("prohibits", "pb"),
-			                                        kw("type", "tp"), kw("returntype", "rt"));
+	//public static Parser<Symbol> keywords  = choice(FILES, REQUIRES, ENCLOSES, PROHIBITS, TYPE, RETTYPE, VARTYPE, MODIFIER, LOOP);
 
 	/*Defining symbols which will be used in my language*/
 	public static Parser<Symbol> lbracket = seqr(sp, token(lit("{"), "{"));	
@@ -70,8 +66,8 @@ public class ScriptParser {
 	
 	/*Defining instructions for my language*/
 	public static Parser<Symbol> filename    = seqr(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java"), semicol), "filename"));
-	public static Parser<List<mast.CommandFiles>> files   = seq(FILES, lbracket, 
-			star(fun(filename, (n) -> new mast.CommandFiles(n.pos, n.texto))), rbracket, (r1, r2, r3, r4) -> r3);//this should be a list like Actions if we want more than one filename
+	public static Parser<List<CommandFiles>> files   = seq(FILES, lbracket, 
+			star(fun(filename, (n) -> new CommandFiles(n.pos, n.texto))), rbracket, (r1, r2, r3, r4) -> r3);
 	
 	/*Defining my java accepted dictionaries*/
 	public static Parser<JavaArgs> javatype = choice(
@@ -82,17 +78,40 @@ public class ScriptParser {
 		    	seq(sp, token(lit("char"), "char"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
 		    	seq(sp, token(lit("long"), "long"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
 		    	seq(sp, token(lit("short"), "short"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
-		    	seq(sp, token(lit("byte"), "byte"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
+		    	seq(sp, token(lit("byte"), "byte"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
+		    	seq(sp, token(lit("void"), "void"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
        		);
+	
+	public static Parser<JavaArgs> javamodifier = choice(
+	    	seq(sp, token(lit("public"), "public"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("private"), "private"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("protected"), "protected"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("static"), "static"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("final"), "final"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("abstract"), "abstract"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("volatile"), "volatile"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("synchronized"), "synchronized"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("class"), "class"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto))
+   		);
 
+	public static Parser<JavaArgs> javaloop = choice(
+	    	seq(sp, token(lit("while"), "while"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("do"), "do"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("for"), "for"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("break"), "break"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("continue"), "continue"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)) 
+   		);
 
+	
 	/*Defining my clauses*/
-	public static Parser<Clause> clausetype    = seq(TYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
-	public static Parser<Clause> clauserettype = seq(RETTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
-	public static Parser<Clause> clausevartype = seq(ARGTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
-	public static Parser<Clause> clauseargtype = seq(VARTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
-	public static Parser<Clause> clauses       = choice(clausetype, clauserettype, 
-															clauseargtype, clausevartype);
+	public static Parser<Clause> clausetype     = seq(TYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
+	public static Parser<Clause> clauserettype  = seq(RETTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseRetType(r4.pos, r3));
+	public static Parser<Clause> clausevartype  = seq(VARTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseVarType(r4.pos, r3));
+	public static Parser<Clause> clausemodifier = seq(MODIFIER, dots, listof(javamodifier, comma), semicol, (r1, r2, r3, r4) -> new ClauseModifier(r4.pos, r3));
+	public static Parser<Clause> clauseloop     = seq(LOOP, dots, listof(javaloop, comma), semicol, (r1, r2, r3, r4) -> new ClauseLoop(r4.pos, r3));
+
+	public static Parser<Clause> clauses        = choice(clausetype, clauserettype, 
+														clausevartype, clausemodifier, clauseloop);
 	
 	/*Defining the three main commands*/
 	public static Parser<List<CommandRequires>> requires   = seq(REQUIRES, lbracket, 

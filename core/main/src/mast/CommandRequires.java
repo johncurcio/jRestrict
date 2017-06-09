@@ -1,8 +1,6 @@
 package mast;
 
 public class CommandRequires extends Commands {
-	//@TODO: ver pra que isso serve!
-	Symbol symbol;
 	
 	public CommandRequires(int pos, Clause clause) {
 		super(pos, clause);
