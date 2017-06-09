@@ -1,17 +1,20 @@
-package mast;
+package lixo;
 
-public class Command extends Node {
+import mast.Node;
+import mast.Visitor;
+
+public class ResetEvent extends Node {
 	public final String nome;
-	public final String codigo;
 	
-	public Command(int pos, String nome, String codigo) {
+	public EventSymbol symbol;
+	
+	public ResetEvent(int pos, String nome) {
 		super(pos);
 		this.nome = nome;
-		this.codigo = codigo;
 	}
-	
+
 	public String toString() {
-		return nome + " " + codigo;
+		return nome;
 	}
 
 	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {

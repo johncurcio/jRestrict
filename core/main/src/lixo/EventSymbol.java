@@ -1,4 +1,6 @@
-package mast;
+package lixo;
+
+import mast.Symbol;
 
 public class EventSymbol extends Symbol {
 	public final String codigo;

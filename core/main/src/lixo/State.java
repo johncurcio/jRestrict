@@ -1,4 +1,4 @@
-package mast;
+package lixo;
 /**
  * machine := events revents? commands state+
 events := "events" event+ "end"
@@ -19,12 +19,16 @@ espaco      := [ \n\r\t]+ | comentario
  */
 import java.util.List;
 
+import mast.Action;
+import mast.Node;
+import mast.Visitor;
+
 public class State extends Node {
 	public final String nome;
 	public final List<Action> actions;
 	public final List<Transition> transitions;
 	
-	StateSymbol symbol;
+	public StateSymbol symbol;
 	
 	public State(int pos, String nome, List<Action> actions,
 			List<Transition> transitions) {

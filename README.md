@@ -44,23 +44,23 @@ mainc     := (encloses? requires?) | (prohibits? requires?)
 
 filename  := [a-zA-Z]+ ".java" ";"
 file      := "files"     "{" filename+ "}"
-requires  := "requires"  "{" clauses+  "}"
-encloses  := "encloses"  "{" clauses+  "}"
-prohibits := "prohibits" "{" clauses+  "
+requires  := "requires"  "{" clauses*  "}"
+encloses  := "encloses"  "{" clauses*  "}"
+prohibits := "prohibits" "{" clauses*  "}"
 comments  := "--"[^\n]*
 
-clauses   := (clause-type ";" | clause-returntype ";" | clause-argtype ";" | clause-vartype ";" | clause-operator ";" | clause-modifier ";" | clause-import ";" | clause-exception ";" | clause-loop ";" | clause-branch ";")
+clauses   := (clause-type | clause-returntype | clause-argtype | clause-vartype | clause-operator | clause-modifier | clause-import | clause-exception | clause-loop | clause-branch )
 
-clause-type       := "type:" java-type ("," java-type)* 
-clause-returntype := "returntype:" java-type ("," java-type)* 
-clause-argtype    := "argtype:" java-type ("," java-type)*
-clause-vartype    := "vartype:" java-type ("," java-type)*
-clause-operator   := "operator:" java-operator ("," java-operator)* 
-clause-modifier   := "modifier:" java-modifier ("," java-modifier)* 
-clause-import     := "import:" java-import ("," java-import)* 
-clause-exception  := "exception:" java-exception ("," java-exception)* 
-clause-loop       := "loop:" java-loop ("," java-loop)* 
-clause-branch     := "branch:" java-branch ("," java-branch)* 
+clause-type       := "type:" java-type ("," java-type)* ";"
+clause-returntype := "returntype:" java-type ("," java-type)* ";" 
+clause-argtype    := "argtype:" java-type ("," java-type)* ";"
+clause-vartype    := "vartype:" java-type ("," java-type)* ";"
+clause-operator   := "operator:" java-operator ("," java-operator)* ";" 
+clause-modifier   := "modifier:" java-modifier ("," java-modifier)* ";"
+clause-import     := "import:" java-import ("," java-import)* ";" 
+clause-exception  := "exception:" java-exception ("," java-exception)* ";" 
+clause-loop       := "loop:" java-loop ("," java-loop)* ";" 
+clause-branch     := "branch:" java-branch ("," java-branch)* ";" 
 
 java-type      := ("int" | "double" | "String" | "Object" | "boolean" | "float" | "char")
 java-operator  := ("+" | "-" | "/" | "*" | "=" | "%" | "&" | "|" | "!" | ">" | "<")

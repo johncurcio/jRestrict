@@ -16,7 +16,9 @@
  * 
  * clause-type       := "type:" java-type ("," java-type)* ";" 
  * clause-returntype := "returntype:" java-type ("," java-type)* ";" 
- * java-type         := ("int" | "double" | "boolean" | "float" | "char")
+ * clause-argtype    := "argtype:" java-type ("," java-type)* ";" 
+ * clause-vartype    := "vartype:" java-type ("," java-type)* ";" 
+ * java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long")
  * 
  * comments  := '#'[^\n]*
  * spaces    := [ \n\r\t]+ | comments
@@ -25,10 +27,17 @@
 
 import static peg.peg.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import mast.Requires;
+import mast.CommandRequires;
+import mast.CommandProhibits;
+import mast.CommandEncloses;
+import mast.Commands;
+import mast.Script;
+import mast.ClauseType;
+import mast.Clause;
+import mast.JavaArgs;
+import mast.JavaType;
 import peg.Parser;
 import peg.Symbol;
 
@@ -45,6 +54,8 @@ public class ScriptParser {
 	public static Parser<Symbol> PROHIBITS = seqr(sp, kw("prohibits", "pb"));
 	public static Parser<Symbol> TYPE      = seqr(sp, kw("type", "tp"));
 	public static Parser<Symbol> RETTYPE   = seqr(sp, kw("returntype", "rt"));
+	public static Parser<Symbol> VARTYPE   = seqr(sp, kw("argtype", "at"));
+	public static Parser<Symbol> ARGTYPE   = seqr(sp, kw("vartype", "vt"));
 	
 	public static Parser<Symbol> keywords  = choice(kw("files", "fi"), kw("requires", "req"), 
 			                                        kw("encloses", "en"), kw("prohibits", "pb"),
@@ -54,40 +65,47 @@ public class ScriptParser {
 	public static Parser<Symbol> lbracket = seqr(sp, token(lit("{"), "{"));	
 	public static Parser<Symbol> rbracket = seqr(sp, token(lit("}"), "}"));	
 	public static Parser<Symbol> semicol  = seqr(sp, token(lit(";"), ";"));
-	public static Parser<Symbol> colon    = seqr(sp, token(lit(","), ","));
+	public static Parser<Symbol> comma    = seqr(sp, token(lit(","), ","));
 	public static Parser<Symbol> dots     = seqr(sp, token(lit(":"), ":"));
 	
 	/*Defining instructions for my language*/
 	public static Parser<Symbol> filename    = seqr(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java"), semicol), "filename"));
-	public static Parser<mast.Files> files   = seq(FILES, lbracket, 
-			fun(filename, (n) -> new mast.Files(n.pos, n.texto)), rbracket, (r1, r2, r3, r4) -> r3);//this should be a list like Actions if we want more than one filename
+	public static Parser<List<mast.CommandFiles>> files   = seq(FILES, lbracket, 
+			star(fun(filename, (n) -> new mast.CommandFiles(n.pos, n.texto))), rbracket, (r1, r2, r3, r4) -> r3);//this should be a list like Actions if we want more than one filename
 	
 	/*Defining my java accepted dictionaries*/
-	public static Parser<Symbol> javatype    = choice(
-													  seqr(sp, token(lit("int"), "int")), 
-			                                          seqr(sp, token(lit("boolean"), "boolean")), 
-			                                          seqr(sp, token(lit("double"), "double")), 
-			                                          seqr(sp, token(lit("float"), "float")),
-			                                          seqr(sp, token(lit("char"), "char"))
-			                                          );
-	
+	public static Parser<JavaArgs> javatype = choice(
+		    	seq(sp, token(lit("int"), "int"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
+		    	seq(sp, token(lit("boolean"), "boolean"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
+		    	seq(sp, token(lit("double"), "double"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
+		    	seq(sp, token(lit("float"), "float"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
+		    	seq(sp, token(lit("char"), "char"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
+		    	seq(sp, token(lit("long"), "long"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
+		    	seq(sp, token(lit("short"), "short"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
+		    	seq(sp, token(lit("byte"), "byte"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
+       		);
+
+
 	/*Defining my clauses*/
-	//List<Symbol> because javatype is Symbol
-	public static Parser<List<Symbol>> clausetype    = seq(TYPE, dots, listof(javatype, colon), semicol, (r1, r2, r3, r4) -> r3);
-	public static Parser<List<Symbol>> clauserettype = seq(RETTYPE, dots, listof(javatype, colon), semicol, (r1, r2, r3, r4) -> r3);
-	public static Parser<List<Symbol>> clauses       = choice(clausetype, clauserettype);
+	public static Parser<Clause> clausetype    = seq(TYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
+	public static Parser<Clause> clauserettype = seq(RETTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
+	public static Parser<Clause> clausevartype = seq(ARGTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
+	public static Parser<Clause> clauseargtype = seq(VARTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
+	public static Parser<Clause> clauses       = choice(clausetype, clauserettype, 
+															clauseargtype, clausevartype);
 	
 	/*Defining the three main commands*/
-	//@TODO: generalize mast.Requires to work with the tree main clauses because they're identical!
-	public static Parser<List<mast.Requires>> requires   = seq(REQUIRES, lbracket, 
-			star(fun(clauses, (n) -> new mast.Requires(1, n))), rbracket, (r1, r2, r3, r4) -> r3);
-	public static Parser<List<mast.Requires>> prohibits  = seq(PROHIBITS, lbracket, 
-			star(fun(clauses, (n) -> new mast.Requires(1, n))), rbracket, (r1, r2, r3, r4) -> r3);
-	public static Parser<List<mast.Requires>> encloses   = seq(ENCLOSES, lbracket, 
-			star(fun(clauses, (n) -> new mast.Requires(1, n))), rbracket, (r1, r2, r3, r4) -> r3);
+	public static Parser<List<CommandRequires>> requires   = seq(REQUIRES, lbracket, 
+			star(fun(clauses, (n) -> new CommandRequires(n.pos, n))), rbracket, (r1, r2, r3, r4) -> r3);
+	public static Parser<List<CommandProhibits>> prohibits  = seq(PROHIBITS, lbracket, 
+			star(fun(clauses, (n) -> new CommandProhibits(n.pos, n))), rbracket, (r1, r2, r3, r4) -> r3);
+	public static Parser<List<CommandEncloses>> encloses   = seq(ENCLOSES, lbracket, 
+			star(fun(clauses, (n) -> new CommandEncloses(n.pos, n))), rbracket, (r1, r2, r3, r4) -> r3);
 	
 	/*Defining the main clause SCRIPT*/
-	public static Parser<Void> script = seq(files, opt(requires), opt(prohibits), opt(encloses));
+	public static Parser<Script> script = seq(files, opt(requires), opt(prohibits), opt(encloses), 
+					(fi, re, pr, en) -> new Script(fi, re, pr, en)
+				);
 	
 	/*public static Parser<Void> comentario = seq(lit("--"), star(cls((c) -> c != '\n')));
 	public static Parser<Void> espaco = choice(plus(cls(Character::isWhitespace)), comentario);

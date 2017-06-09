@@ -1,15 +1,18 @@
-package mast;
+package lixo;
 
-public class Event extends Node {
+import mast.Node;
+import mast.Visitor;
+
+public class Command extends Node {
 	public final String nome;
 	public final String codigo;
 	
-	public Event(int pos, String nome, String codigo) {
+	public Command(int pos, String nome, String codigo) {
 		super(pos);
 		this.nome = nome;
 		this.codigo = codigo;
 	}
-
+	
 	public String toString() {
 		return nome + " " + codigo;
 	}

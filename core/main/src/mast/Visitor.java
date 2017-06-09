@@ -1,8 +1,18 @@
 package mast;
 
+import lixo.Command;
+import lixo.Event;
+import lixo.Machine;
+import lixo.ResetEvent;
+import lixo.State;
+import lixo.Transition;
+
 public interface Visitor<C,R> {
-	R visit(Files fi, C ctx);
-	R visit(Requires req, C ctx);
+	R visit(CommandFiles fi, C ctx);
+	R visit(Commands req, C ctx);
+	R visit(JavaArgs req, C ctx);
+	R visit(Clause req, C ctx);
+	R visit(Script req, C ctx);
 	
 	//@TODO: remove this
 	R visit(Action ac, C ctx);

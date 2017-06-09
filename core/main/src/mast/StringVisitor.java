@@ -1,16 +1,37 @@
 package mast;
 
+import lixo.Command;
+import lixo.Event;
+import lixo.Machine;
+import lixo.ResetEvent;
+import lixo.State;
+import lixo.Transition;
+
 public class StringVisitor implements Visitor<Void, String> {
 
 	@Override
-	public String visit(Requires req, Void ctx) {
-		return req.toString();
+	public String visit(CommandFiles fi, Void ctx) {
+		return fi.filename;
 	}
 	
 	@Override
-	public String visit(Files fi, Void ctx) {
-		return fi.filename;
+	public String visit(Commands req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	@Override
+	public String visit(JavaArgs req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(Clause req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 	//@TODO: remove these
 	@Override
@@ -79,5 +100,12 @@ public class StringVisitor implements Visitor<Void, String> {
 	public String visit(Transition tr, Void ctx) {
 		return tr.trigger + " => " + tr.target;
 	}
+
+	@Override
+	public String visit(Script req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

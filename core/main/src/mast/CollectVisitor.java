@@ -2,6 +2,16 @@ package mast;
 
 import java.util.List;
 
+import lixo.Command;
+import lixo.CommandSymbol;
+import lixo.Event;
+import lixo.EventSymbol;
+import lixo.Machine;
+import lixo.ResetEvent;
+import lixo.State;
+import lixo.StateSymbol;
+import lixo.Transition;
+
 public class CollectVisitor implements Visitor<Void, Void> {
 	final Scope<EventSymbol> events = new Scope<>("events");
 	final Scope<CommandSymbol> commands = new Scope<>("commands");
@@ -14,14 +24,26 @@ public class CollectVisitor implements Visitor<Void, Void> {
 	}
 	
 	@Override
-	public Void visit(Files fi, Void ctx) {
+	public Void visit(CommandFiles fi, Void ctx) {
 		return null;
 	}
 
 	@Override
-	public Void visit(Requires req, Void ctx) {
+	public Void visit(Commands req, Void ctx) {
 		return null;
 	}
+	
+	@Override
+	public Void visit(JavaArgs req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(Clause req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}	
 
 	//@TODO: remove these visitors
 	@Override
@@ -84,6 +106,12 @@ public class CollectVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(Transition tr, Void ctx) {
+		return null;
+	}
+
+	@Override
+	public Void visit(Script req, Void ctx) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

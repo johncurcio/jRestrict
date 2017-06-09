@@ -1,5 +1,7 @@
 package mast;
 
+import lixo.CommandSymbol;
+
 public class Action extends Node {
 	public final String nome;
 	

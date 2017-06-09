@@ -1,6 +1,10 @@
-package mast;
+package lixo;
 
 import java.util.List;
+
+import mast.Scope;
+import mast.StringVisitor;
+import mast.Visitor;
 
 public class Machine {
 	public final List<Event> events;

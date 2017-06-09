@@ -167,7 +167,39 @@ public class peg {
 		return new OrdChoice<>(p1, new OrdChoice<>(p2, new OrdChoice<>(p3, new OrdChoice<>(p4, 
 				new OrdChoice<>(p5, new OrdChoice<>(p6, p7))))));
 	}
+	
+	public static <T> Parser<T> choice(Parser<? extends T> p1, Parser<? extends T> p2, 
+			Parser<? extends T> p3, Parser<? extends T> p4, Parser<? extends T> p5, 
+			Parser<? extends T> p6, Parser<? extends T> p7, Parser<? extends T> p8) {
+		return new OrdChoice<>(p1, new OrdChoice<>(p2, new OrdChoice<>(p3, new OrdChoice<>(p4, 
+				new OrdChoice<>(p5, new OrdChoice<>(p6, new OrdChoice<>(p7,p8)))))));
+	}
+	
+	public static <T> Parser<T> choice(Parser<? extends T> p1, Parser<? extends T> p2, 
+			Parser<? extends T> p3, Parser<? extends T> p4, Parser<? extends T> p5, 
+			Parser<? extends T> p6, Parser<? extends T> p7, Parser<? extends T> p8,
+			Parser<? extends T> p9) {
+		return new OrdChoice<>(p1, new OrdChoice<>(p2, new OrdChoice<>(p3, new OrdChoice<>(p4, 
+				new OrdChoice<>(p5, new OrdChoice<>(p6, new OrdChoice<>(p7,new OrdChoice<>(p8, p9))))))));
+	}
 
+	public static <T> Parser<T> choice(Parser<? extends T> p1, Parser<? extends T> p2, 
+			Parser<? extends T> p3, Parser<? extends T> p4, Parser<? extends T> p5, 
+			Parser<? extends T> p6, Parser<? extends T> p7, Parser<? extends T> p8,
+			Parser<? extends T> p9, Parser<? extends T> p10) {
+		return new OrdChoice<>(p1, new OrdChoice<>(p2, new OrdChoice<>(p3, new OrdChoice<>(p4, 
+				new OrdChoice<>(p5, new OrdChoice<>(p6, new OrdChoice<>(p7,new OrdChoice<>(p8, 
+						new OrdChoice<>(p9,p10)))))))));
+	}
+	
+	public static <T> Parser<T> choice(Parser<? extends T> p1, Parser<? extends T> p2, 
+			Parser<? extends T> p3, Parser<? extends T> p4, Parser<? extends T> p5, 
+			Parser<? extends T> p6, Parser<? extends T> p7, Parser<? extends T> p8,
+			Parser<? extends T> p9, Parser<? extends T> p10, Parser<? extends T> p11) {
+		return new OrdChoice<>(p1, new OrdChoice<>(p2, new OrdChoice<>(p3, new OrdChoice<>(p4, 
+				new OrdChoice<>(p5, new OrdChoice<>(p6, new OrdChoice<>(p7,new OrdChoice<>(p8, 
+						new OrdChoice<>(p9,new OrdChoice<>(p10,p11))))))))));
+	}
 	public static <T> Parser<T> lazy(Supplier<Parser<T>> sp) {
 		return new LazyParser<>(sp);
 	}

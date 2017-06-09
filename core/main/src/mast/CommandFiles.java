@@ -1,10 +1,10 @@
 package mast;
 
-public class Files extends Node {
+public class CommandFiles extends Node {
 	
 	public final String filename;
 	
-	public Files(int pos, String filename) {
+	public CommandFiles(int pos, String filename) {
 		super(pos);
 		this.filename = filename;
 	}

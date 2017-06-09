@@ -2,6 +2,16 @@ package mast;
 
 import java.util.List;
 
+import lixo.Command;
+import lixo.CommandSymbol;
+import lixo.Event;
+import lixo.EventSymbol;
+import lixo.Machine;
+import lixo.ResetEvent;
+import lixo.State;
+import lixo.StateSymbol;
+import lixo.Transition;
+
 public class BindingVisitor implements Visitor<Void, Void> {
 	Scope<EventSymbol> events;
 	Scope<CommandSymbol> commands;
@@ -15,12 +25,24 @@ public class BindingVisitor implements Visitor<Void, Void> {
 
 	//@TODO: assert correctness of these
 	@Override
-	public Void visit(Files fi, Void ctx) {
+	public Void visit(CommandFiles fi, Void ctx) {
 		return null;
 	}
 
 	@Override
-	public Void visit(Requires req, Void ctx) {
+	public Void visit(Commands req, Void ctx) {
+		return null;
+	}
+	
+	@Override
+	public Void visit(JavaArgs req, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(Clause req, Void ctx) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -97,6 +119,12 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		if(tr.starget == null) {
 			errors.add("transicao usa um estado " + tr.target + " nao declarado na posicao " + tr.pos);
 		}
+		return null;
+	}
+
+	@Override
+	public Void visit(Script req, Void ctx) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
