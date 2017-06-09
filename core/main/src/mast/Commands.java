@@ -8,7 +8,9 @@ public abstract class Commands extends Node {
 		this.clause = clause;
 	}
 	
-	public abstract String toString();
+	public String toString() {
+		return clause.type + ": " + clause.toString();
+	}
 	
 	public abstract <C, R> R visit(Visitor<C, R> visitor, C ctx);
 	

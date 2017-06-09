@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ClauseVarType extends Clause {
 
-	public ClauseVarType(int pos, List<JavaArgs> args) {
-		super(pos, args);
+	public ClauseVarType(int pos, String type, List<JavaArgs> args) {
+		super(pos, type, args);
 	}
 
 	@Override

@@ -104,11 +104,11 @@ public class ScriptParser {
 
 	
 	/*Defining my clauses*/
-	public static Parser<Clause> clausetype     = seq(TYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r3));
-	public static Parser<Clause> clauserettype  = seq(RETTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseRetType(r4.pos, r3));
-	public static Parser<Clause> clausevartype  = seq(VARTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseVarType(r4.pos, r3));
-	public static Parser<Clause> clausemodifier = seq(MODIFIER, dots, listof(javamodifier, comma), semicol, (r1, r2, r3, r4) -> new ClauseModifier(r4.pos, r3));
-	public static Parser<Clause> clauseloop     = seq(LOOP, dots, listof(javaloop, comma), semicol, (r1, r2, r3, r4) -> new ClauseLoop(r4.pos, r3));
+	public static Parser<Clause> clausetype     = seq(TYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r1.texto, r3));
+	public static Parser<Clause> clauserettype  = seq(RETTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseRetType(r4.pos, r1.texto, r3));
+	public static Parser<Clause> clausevartype  = seq(VARTYPE, dots, listof(javatype, comma), semicol, (r1, r2, r3, r4) -> new ClauseVarType(r4.pos, r1.texto, r3));
+	public static Parser<Clause> clausemodifier = seq(MODIFIER, dots, listof(javamodifier, comma), semicol, (r1, r2, r3, r4) -> new ClauseModifier(r4.pos, r1.texto, r3));
+	public static Parser<Clause> clauseloop     = seq(LOOP, dots, listof(javaloop, comma), semicol, (r1, r2, r3, r4) -> new ClauseLoop(r4.pos, r1.texto, r3));
 
 	public static Parser<Clause> clauses        = choice(clausetype, clauserettype, 
 														clausevartype, clausemodifier, clauseloop);

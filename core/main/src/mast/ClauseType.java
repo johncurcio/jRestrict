@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ClauseType extends Clause {
 
-	public ClauseType(int pos, List<JavaArgs> args) {
-		super(pos, args);
+	public ClauseType(int pos, String type, List<JavaArgs> args) {
+		super(pos, type, args);
 	}
 
 	@Override

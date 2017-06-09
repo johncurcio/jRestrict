@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ClauseRetType extends Clause {
 
-	public ClauseRetType(int pos, List<JavaArgs> args) {
-		super(pos, args);
+	public ClauseRetType(int pos, String type, List<JavaArgs> args) {
+		super(pos, type, args);
 	}
 
 	@Override

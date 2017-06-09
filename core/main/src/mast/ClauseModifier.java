@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ClauseModifier extends Clause {
 
-	public ClauseModifier(int pos, List<JavaArgs> args) {
-		super(pos, args);
+	public ClauseModifier(int pos, String type, List<JavaArgs> args) {
+		super(pos, type, args);
 	}
 
 	@Override

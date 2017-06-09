@@ -6,10 +6,6 @@ public class CommandEncloses extends Commands {
 		super(pos, clause);
 	}
 	
-	public String toString() {
-		return clause.toString();
-	}
-	
 	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {
 		return visitor.visit(this, ctx);
 	}

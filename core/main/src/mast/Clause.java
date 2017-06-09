@@ -5,9 +5,11 @@ import java.util.List;
 public abstract class Clause extends Node {
 
 	public final List<JavaArgs> args;
+	public final String type;
 	
-	public Clause(int pos, List<JavaArgs> args) {
+	public Clause(int pos, String type, List<JavaArgs> args) {
 		super(pos);
+		this.type = type;
 		this.args = args;
 	}
 	

@@ -4,8 +4,8 @@ import java.util.List;
 
 public class ClauseLoop extends Clause {
 
-	public ClauseLoop(int pos, List<JavaArgs> args) {
-		super(pos, args);
+	public ClauseLoop(int pos, String type, List<JavaArgs> args) {
+		super(pos, type, args);
 	}
 
 	@Override
