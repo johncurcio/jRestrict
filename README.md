@@ -69,4 +69,11 @@ java-import    := identifier (("." identifier)* | ".*")
 java-exception := identifier "Exception"
 java-loop      := ("while" | "do" | "for" | "break" | "continue")
 java-branch    := ("switch" | "if")
+
+
+java-arithmeticop := ("+" | "-" | "/" | "*" | "%" | "++" | "--")
+java-assignmentop := ("=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | "&=" | "^=" | "|=")
+java-bitwiseop := ("|" | "&" | "^" | "~" | ">>" | "<<" | ">>>") 
+java-boolop  := ("&&" | "||" | "==" | "<=" | ">=" | "!=" | "!")
+
 ```

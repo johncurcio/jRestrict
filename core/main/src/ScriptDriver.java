@@ -28,8 +28,10 @@ public class ScriptDriver {
 		peg.Pair<mast.Script, java.util.List<String>> res = peg.peg.run(ScriptParser.script, buf.toString()); 
 		mast.CollectVisitor cv = new mast.CollectVisitor(res.y);
 		mast.BindingVisitor bv = new mast.BindingVisitor(res.y);
-		res.x.visit(cv, null);
-		res.x.visit(bv, null);
+		if(res.x != null){ 
+			res.x.visit(cv, null);
+			res.x.visit(bv, null);
+		}
 		return res;
 	}
 	

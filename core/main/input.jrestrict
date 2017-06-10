@@ -5,6 +5,7 @@ files {
  
 encloses{
     type: int, boolean, float;
+    branch: ?:;
 }
 
 prohibits{
@@ -17,4 +18,5 @@ prohibits{
 requires{
     type: int, boolean, float;
     returntype: void;
+    operator: +, ++;
 }

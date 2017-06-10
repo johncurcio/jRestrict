@@ -244,7 +244,7 @@ public class peg {
 		endOfToken = (endOfToken == -1 ? ent.length()-1 : endOfToken);
 		beginOfToken = (beginOfToken == -1 ? 0 : beginOfToken);
 		String msg = "erro de sintaxe na posicao " + pos + " (\"" + ent.substring(beginOfToken, endOfToken).replace("\n", " ") + "\")" + 
-				", era esperado <" + (ntipos.length > 0 ? String.join(", ", ntipos) : " final da entrada") + ">";
+				", era esperado " + (ntipos.length > 0 ? String.join(", ", ntipos) : " final da entrada");
 		System.err.println(msg);
 		if(erros.contains(msg)) return false;
 		else return erros.add(msg);

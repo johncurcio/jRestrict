@@ -13,7 +13,9 @@ public abstract class Clause extends Node {
 		this.args = args;
 	}
 	
-	public abstract String toString();
+	public String toString() {
+		return this.args.toString();
+	}
 	
 	public abstract <C, R> R visit(Visitor<C, R> visitor, C ctx);
 
