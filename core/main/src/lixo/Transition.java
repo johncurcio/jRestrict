@@ -21,6 +21,7 @@ public class Transition extends Node {
 	}
 
 	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {
-		return visitor.visit(this, ctx);
+		return null;
+		//return visitor.visit(this, ctx);
 	}
 }

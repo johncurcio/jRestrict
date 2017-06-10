@@ -1,10 +1,11 @@
  files {
     Main.java;
-    Main.java;
+    Foo.java;
  }
 
  # declaring all clauses that MUST be on my java file
  requires{
+ 	returntype: void;
     type: int, boolean, float;
     returntype: void;
  }

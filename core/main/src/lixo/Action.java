@@ -1,6 +1,7 @@
-package mast;
+package lixo;
 
-import lixo.CommandSymbol;
+import mast.Node;
+import mast.Visitor;
 
 public class Action extends Node {
 	public final String nome;
@@ -17,6 +18,7 @@ public class Action extends Node {
 	}
 	
 	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {
-		return visitor.visit(this, ctx);
+		return null;
+		//return visitor.visit(this, ctx);
 	}
 }

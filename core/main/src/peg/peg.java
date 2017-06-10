@@ -215,7 +215,7 @@ public class peg {
 	public static <T> Pair<T, List<String>> run(Parser<T> p, String ent) {
 		List<String> erros = new ArrayList<>();
 		T res = null;
-		Error err = new Error(true);
+		Error err = new Error();
 		while(true) {
 			try {
 				Result<? extends T> suf = p.parse(err, ent);

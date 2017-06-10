@@ -2,20 +2,12 @@ package mast;
 
 import java.util.List;
 
-import lixo.Command;
-import lixo.CommandSymbol;
-import lixo.Event;
-import lixo.EventSymbol;
-import lixo.Machine;
-import lixo.ResetEvent;
-import lixo.State;
-import lixo.StateSymbol;
-import lixo.Transition;
-
 public class CollectVisitor implements Visitor<Void, Void> {
-	final Scope<EventSymbol> events = new Scope<>("events");
-	final Scope<CommandSymbol> commands = new Scope<>("commands");
-	final Scope<StateSymbol> states = new Scope<>("states");
+
+	public final Scope<CommandSymbol> sRequires = new Scope<>("requires");
+	public final Scope<CommandSymbol> sProhibits = new Scope<>("prohibits");
+	public final Scope<CommandSymbol> sEncloses = new Scope<>("encloses");
+	public final Scope<FileSymbol> sFiles = new Scope<>("files");
 	
 	final List<String> errors;
 	
@@ -25,93 +17,72 @@ public class CollectVisitor implements Visitor<Void, Void> {
 	
 	@Override
 	public Void visit(CommandFiles fi, Void ctx) {
-		return null;
-	}
-
-	@Override
-	public Void visit(Commands req, Void ctx) {
+		if (sFiles.resolve(fi.filename) == null){
+			sFiles.define(new FileSymbol(fi.filename));
+		}else{
+			errors.add("arquivo <" + fi.filename + "> repetido na posicao " + fi.pos + " para o comando files");			
+		}
 		return null;
 	}
 	
 	@Override
 	public Void visit(JavaArgs req, Void ctx) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Void visit(Clause req, Void ctx) {
-		// TODO Auto-generated method stub
+	public Void visit(Clause clause, Void ctx) {
+		return null;
+	}
+	
+	@Override
+	public Void visit(Script script, Void ctx) {
+		script.sEncloses = this.sEncloses;
+		script.sProhibits = this.sProhibits;
+		script.sRequires = this.sRequires;
+		script.sFiles = this.sFiles;
+		for(CommandEncloses en: script.enclosement) {
+			en.visit(this, ctx);
+		}
+		for(CommandRequires req: script.requirements) {
+			req.visit(this, ctx);
+		}
+		for(CommandProhibits pb: script.prohibitions) {
+			pb.visit(this, ctx);
+		}
+		for(CommandFiles fi: script.files) {
+			fi.visit(this, ctx);
+		}
 		return null;
 	}	
-
-	//@TODO: remove these visitors
+	
 	@Override
-	public Void visit(Action ac, Void ctx) {
-		return null;
-	}
-
-	@Override
-	public Void visit(Command cmd, Void ctx) {
-		if(commands.resolve(cmd.nome) == null) {
-			commands.define(new CommandSymbol(cmd.nome, cmd.codigo));
-		} else {
-			errors.add("comando " + cmd.nome + " redeclarado na posicao " + cmd.pos);
+	public Void visit(CommandRequires cmd, Void ctx) {
+		if (sRequires.resolve(cmd.clause.type) == null){
+			sRequires.define(new CommandSymbol(cmd.clause.type, cmd.clause));
+		}else{
+			errors.add("clausula <" + cmd.clause.type + "> redeclarada na posicao " + cmd.clause.pos + " para o comando requires");
 		}
 		return null;
 	}
 
 	@Override
-	public Void visit(Event ev, Void ctx) {
-		if(events.resolve(ev.nome) == null) {
-			events.define(new EventSymbol(ev.nome, ev.codigo));
-		} else {
-			errors.add("evento " + ev.nome + " redeclarado na posição " + ev.pos);
+	public Void visit(CommandProhibits cmd, Void ctx) {
+		if (sProhibits.resolve(cmd.clause.type) == null){
+			sProhibits.define(new CommandSymbol(cmd.clause.type, cmd.clause));
+		}else{
+			errors.add("clausula <" + cmd.clause.type + "> redeclarada na posicao " + cmd.clause.pos + " para o comando prohibits");
 		}
 		return null;
 	}
 
 	@Override
-	public Void visit(Machine m, Void ctx) {
-		m.sevents = events;
-		m.scommands = commands;
-		m.sstates = states;
-		for(Event ev: m.events) {
-			ev.visit(this, ctx);
+	public Void visit(CommandEncloses cmd, Void ctx) {
+		if (sEncloses.resolve(cmd.clause.type) == null){
+			sEncloses.define(new CommandSymbol(cmd.clause.type, cmd.clause));
+		}else{
+			errors.add("clausula <" + cmd.clause.type + "> redeclarada na posicao " + cmd.clause.pos+ " para o comando encloses");
 		}
-		for(Command c: m.commands) {
-			c.visit(this, ctx);
-		}
-		for(State s: m.states) {
-			s.visit(this, ctx);
-		}
-		return null;
-	}
-
-	@Override
-	public Void visit(ResetEvent rev, Void ctx) {
-		return null;
-	}
-
-	@Override
-	public Void visit(State st, Void ctx) {
-		if(states.resolve(st.nome) == null) {
-			st.symbol = new StateSymbol(st.nome);
-			states.define(st.symbol);
-		} else {
-			errors.add("estado " + st.nome + " redeclarado na posicao " + st.pos);
-		}
-		return null;
-	}
-
-	@Override
-	public Void visit(Transition tr, Void ctx) {
-		return null;
-	}
-
-	@Override
-	public Void visit(Script req, Void ctx) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

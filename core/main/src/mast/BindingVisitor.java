@@ -2,130 +2,53 @@ package mast;
 
 import java.util.List;
 
-import lixo.Command;
-import lixo.CommandSymbol;
-import lixo.Event;
-import lixo.EventSymbol;
-import lixo.Machine;
-import lixo.ResetEvent;
-import lixo.State;
-import lixo.StateSymbol;
-import lixo.Transition;
-
 public class BindingVisitor implements Visitor<Void, Void> {
-	Scope<EventSymbol> events;
-	Scope<CommandSymbol> commands;
-	Scope<StateSymbol> states;
-
+	public Scope<CommandSymbol> sRequires;
+	public Scope<CommandSymbol> sProhibits;
+	public Scope<CommandSymbol> sEncloses;
+	public Scope<FileSymbol> sFiles;
 	final List<String> errors;
-	
+
 	public BindingVisitor(List<String> errors) {
 		this.errors = errors;
 	}
 
-	//@TODO: assert correctness of these
 	@Override
 	public Void visit(CommandFiles fi, Void ctx) {
 		return null;
 	}
-
-	@Override
-	public Void visit(Commands req, Void ctx) {
-		return null;
-	}
 	
 	@Override
-	public Void visit(JavaArgs req, Void ctx) {
-		// TODO Auto-generated method stub
+	public Void visit(JavaArgs arg, Void ctx) {
 		return null;
 	}
 
 	@Override
-	public Void visit(Clause req, Void ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	//@TODO: remove these
-	@Override
-	public Void visit(Action ac, Void ctx) {
-		ac.symbol = commands.resolve(ac.nome);
-		if(ac.symbol == null) {
-			errors.add("acao " + ac.nome + " nao corresponde a um comando na posicao " + ac.pos);
-		}
-		return null;
-	}
-	
-	@Override
-	public Void visit(Command cmd, Void ctx) {
+	public Void visit(Clause cl, Void ctx) {
 		return null;
 	}
 
 	@Override
-	public Void visit(Event ev, Void ctx) {
+	public Void visit(Script script, Void ctx) {
+		this.sEncloses = script.sEncloses;
+		this.sFiles = script.sFiles;
+		this.sProhibits = script.sProhibits;
+		this.sRequires = script.sRequires;
 		return null;
 	}
 
 	@Override
-	public Void visit(Machine m, Void ctx) {
-		events = m.sevents;
-		commands = m.scommands;
-		states = m.sstates;
-		for(ResetEvent rev: m.revents) {
-			rev.visit(this, ctx);
-		}
-		for(State st: m.states) {
-			st.visit(this, ctx);
-		}
+	public Void visit(CommandRequires cmd, Void ctx) {
 		return null;
 	}
 
 	@Override
-	public Void visit(ResetEvent rev, Void ctx) {
-		rev.symbol = events.resolve(rev.nome);
-		if(rev.symbol == null) {
-			errors.add("evento de reset " + rev.nome + " nao corresponde a um evento na posicao " + rev.pos);
-		}
+	public Void visit(CommandProhibits cmd, Void ctx) {
 		return null;
 	}
 
 	@Override
-	public Void visit(State st, Void ctx) {
-		StateSymbol symbol = st.symbol;
-		if(symbol != null) {
-			for(Action ac: st.actions) {
-				ac.visit(this, ctx);
-				symbol.actions.add(ac.symbol);
-			}
-			for(Transition tr: st.transitions) {
-				tr.visit(this, ctx);
-				if(symbol.transitions.containsKey(tr.strigger)) {
-					errors.add("transicao com mesmo disparador " + tr.trigger + " na posicao " + tr.pos);
-				} else {
-					symbol.transitions.put(tr.strigger, tr.starget);
-				}
-			}
-		}
+	public Void visit(CommandEncloses cmd, Void ctx) {
 		return null;
 	}
-
-	@Override
-	public Void visit(Transition tr, Void ctx) {
-		tr.strigger = events.resolve(tr.trigger);
-		if(tr.strigger == null) {
-			errors.add("transicao usa um evento " + tr.trigger + " nao declarado na posicao " + tr.pos);
-		}
-		tr.starget = states.resolve(tr.target);
-		if(tr.starget == null) {
-			errors.add("transicao usa um estado " + tr.target + " nao declarado na posicao " + tr.pos);
-		}
-		return null;
-	}
-
-	@Override
-	public Void visit(Script req, Void ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

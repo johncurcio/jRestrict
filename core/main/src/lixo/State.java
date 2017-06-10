@@ -19,7 +19,6 @@ espaco      := [ \n\r\t]+ | comentario
  */
 import java.util.List;
 
-import mast.Action;
 import mast.Node;
 import mast.Visitor;
 
@@ -56,6 +55,7 @@ public class State extends Node {
 	}
 
 	public <C, R> R visit(Visitor<C, R> visitor, C ctx) {
-		return visitor.visit(this, ctx);
+		return null;
+		//return visitor.visit(this, ctx);
 	}
 }

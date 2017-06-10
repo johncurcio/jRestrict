@@ -1,12 +1,5 @@
 package mast;
 
-import lixo.Command;
-import lixo.Event;
-import lixo.Machine;
-import lixo.ResetEvent;
-import lixo.State;
-import lixo.Transition;
-
 public class StringVisitor implements Visitor<Void, String> {
 
 	@Override
@@ -15,97 +8,59 @@ public class StringVisitor implements Visitor<Void, String> {
 	}
 	
 	@Override
-	public String visit(Commands req, Void ctx) {
-		// TODO Auto-generated method stub
-		return null;
+	public String visit(JavaArgs args, Void ctx) {
+		return args.arg;
 	}
 
 	@Override
-	public String visit(JavaArgs req, Void ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String visit(Clause req, Void ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-	//@TODO: remove these
-	@Override
-	public String visit(Action ac, Void ctx) {
-		return ac.nome;
+	public String visit(Clause clause, Void ctx) {
+		String out = clause.type + ": ";
+		for (JavaArgs arg: clause.args){
+			out += arg.toString() + ", ";
+		}
+		out = out.replaceAll(", $", "");
+		return out;
 	}
 	
 	@Override
-	public String visit(Command cmd, Void ctx) {
-		return cmd.nome + " " + cmd.codigo;
-	}
-
-	@Override
-	public String visit(Event ev, Void ctx) {
-		return ev.nome + " " + ev.codigo;
-	}
-
-	@Override
-	public String visit(Machine m, Void ctx) {
+	public String visit(Script script, Void ctx) {
 		StringBuffer buf = new StringBuffer();
-		buf.append("events\n");
-		for(Event ev: m.events) {
-			buf.append(" " + ev.visit(this, ctx) + "\n");
+		buf.append("files { \n");
+		for(CommandFiles fi: script.files){
+			buf.append(" " + fi.visit(this, ctx) + ";\n");
 		}
-		buf.append("end\n");
-		if(!m.revents.isEmpty()) {
-			buf.append("resetEvents\n");
-			for(ResetEvent rev: m.revents) {
-				buf.append(" " + rev.visit(this, ctx) + "\n");
-			}
-			buf.append("end\n");
+		buf.append("}\n\n");
+		buf.append("requires { \n");
+		for(CommandRequires fi: script.requirements){
+			buf.append(" " + fi.visit(this, ctx) + ";\n");
 		}
-		buf.append("commands\n");
-		for(Command cmd: m.commands) {
-			buf.append(" " + cmd.visit(this, ctx) + "\n");
+		buf.append("}\n\n");
+		buf.append("prohibits { \n");
+		for(CommandProhibits fi: script.prohibitions){
+			buf.append(" " + fi.visit(this, ctx) + ";\n");
 		}
-		buf.append("end\n");
-		for(State st: m.states) buf.append(st.visit(this, ctx));
+		buf.append("}\n\n");
+		buf.append("encloses { \n");
+		for(CommandEncloses fi: script.enclosement){
+			buf.append(" " + fi.visit(this, ctx) + ";\n");
+		}
+		buf.append("}\n");
 		return buf.toString();
 	}
 
 	@Override
-	public String visit(ResetEvent rev, Void ctx) {
-		return rev.nome;
+	public String visit(CommandRequires cmd, Void ctx) {
+		return visit(cmd.clause, ctx);
 	}
 
 	@Override
-	public String visit(State st, Void ctx) {
-		StringBuffer buf = new StringBuffer();
-		buf.append("state " + st.nome + "\n");
-		if(!st.actions.isEmpty()) {
-			buf.append("  actions {");
-			for(Action ac: st.actions) {
-				buf.append(" " + ac.visit(this, ctx));
-			}
-			buf.append(" }\n");
-		}
-		for(Transition tr: st.transitions) {
-			buf.append("  " + tr.visit(this, ctx) + "\n");
-		}
-		buf.append("end\n");
-		return buf.toString();
+	public String visit(CommandProhibits cmd, Void ctx) {
+		return visit(cmd.clause, ctx);
 	}
 
 	@Override
-	public String visit(Transition tr, Void ctx) {
-		return tr.trigger + " => " + tr.target;
-	}
-
-	@Override
-	public String visit(Script req, Void ctx) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	public String visit(CommandEncloses cmd, Void ctx) {
+		return visit(cmd.clause, ctx);
+	}	
 
 }

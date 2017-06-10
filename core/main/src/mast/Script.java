@@ -9,11 +9,10 @@ public class Script {
 	public final List<CommandProhibits> prohibitions;
 	public final List<CommandEncloses> enclosement;
 	
-	//@TODO: how the f do these work?
-	public Scope<Symbol> symbol_requires;
-	public Scope<Symbol> symbol_prohibits;
-	public Scope<Symbol> symbol_encloses;
-	public Scope<Symbol> symbol_files;
+	public Scope<CommandSymbol> sRequires;
+	public Scope<CommandSymbol> sProhibits;
+	public Scope<CommandSymbol> sEncloses;
+	public Scope<FileSymbol> sFiles;
 	
 	public Script(List<CommandFiles> files, List<CommandRequires> requirements, 
 			List<CommandProhibits> prohibitions, List<CommandEncloses> enclosement) {

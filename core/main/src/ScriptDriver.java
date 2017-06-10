@@ -5,9 +5,15 @@ import java.util.List;
 
 public class ScriptDriver {
 
-	//@TODO: do i need to use modelvisitor here?
 	public static peg.Pair<mast.Script, List<String>> read(String fname) throws IOException {
-		return openScript(fname);
+		peg.Pair<mast.Script, List<String>> res =  openScript(fname);
+		if (!res.y.isEmpty()){
+			for(String err: res.y){ 
+				System.err.println(err);
+			}
+			return null;
+		}
+		return res;
 	}
 	
 	public static peg.Pair<mast.Script, List<String>> openScript(String fname) throws IOException {
@@ -30,10 +36,14 @@ public class ScriptDriver {
 	public static void main(String[] args) throws IOException {
 		String fname = args[0];
 		peg.Pair<mast.Script, List<String>> m = read(fname);
-		System.out.println(">>>>>>>>>> DEBUG <<<<<<<<<<<");
-		System.out.println("> Files: " + m.x.files.toString());
-		System.out.println("> Requires: " + m.x.requirements.toString());
-		System.out.println("> Encloses: " + m.x.enclosement.toString());
-		System.out.println("> Prohibits: " + m.x.prohibitions.toString());
+		if (m != null){
+			System.out.println(">>>>>>>>>> DEBUG <<<<<<<<<<<");
+			System.out.println("> Files: " + m.x.files.toString());
+			System.out.println("> Requires: " + m.x.requirements.toString());
+			System.out.println("> Encloses: " + m.x.enclosement.toString());
+			System.out.println("> Prohibits: " + m.x.prohibitions.toString());
+			System.out.println("\n>>>>>>>>>> Script Visitor <<<<<<<<<<<");
+			System.out.println(m.x.toString());
+		}
 	}
 }
