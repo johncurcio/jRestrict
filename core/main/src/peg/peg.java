@@ -243,8 +243,8 @@ public class peg {
 		int beginOfToken = ent.lastIndexOf(" ", pos);
 		endOfToken = (endOfToken == -1 ? ent.length()-1 : endOfToken);
 		beginOfToken = (beginOfToken == -1 ? 0 : beginOfToken);
-		String msg = "erro de sintaxe na posicao " + pos + " (\"" + ent.substring(beginOfToken, endOfToken+1) + "\")" + 
-				", era esperado " + (ntipos.length > 0 ? String.join(", ", ntipos) : " final da entrada");
+		String msg = "erro de sintaxe na posicao " + pos + " (\"" + ent.substring(beginOfToken, endOfToken).replace("\n", " ") + "\")" + 
+				", era esperado <" + (ntipos.length > 0 ? String.join(", ", ntipos) : " final da entrada") + ">";
 		System.err.println(msg);
 		if(erros.contains(msg)) return false;
 		else return erros.add(msg);

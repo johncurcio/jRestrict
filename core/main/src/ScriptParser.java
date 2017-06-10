@@ -124,7 +124,12 @@ public class ScriptParser {
 			star(fun(clauses, (n) -> new CommandEncloses(n.pos, n))), rbracket, (r1, r2, r3, r4) -> r3);
 	
 	/*Defining the main clause SCRIPT*/
-	public static Parser<Script> script = seq(files, opt(requires), opt(prohibits), opt(encloses), 
-					(fi, re, pr, en) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en)
-				);
+	public static Parser<Script> script = choice(
+				seq(files, requires, prohibits, encloses, (fi, re, pr, en) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en)),
+				seq(files, prohibits, requires, encloses, (fi, pr, re, en) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en)),
+				seq(files, encloses, requires, prohibits, (fi, en, re, pr) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en)),
+				seq(files, requires, encloses, prohibits, (fi, re, en, pr) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en)),
+				seq(files, prohibits, encloses, requires, (fi, pr, en, re) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en)),
+				seq(files, encloses, prohibits, requires, (fi, en, pr, re) -> new Script(fi, re == null ? new ArrayList<>() : re, pr == null ? new ArrayList<>() : pr, en == null ? new ArrayList<>() : en))
+			);
 }
