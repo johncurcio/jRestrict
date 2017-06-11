@@ -86,4 +86,52 @@ public class CollectVisitor implements Visitor<Void, Void> {
 		return null;
 	}
 
+	@Override
+	public Void visit(ClauseRetType clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseType clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseVarType clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseLoop clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseBranch clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseImport clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseModifier clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Void visit(ClauseOperator clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

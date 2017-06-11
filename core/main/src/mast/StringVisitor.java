@@ -61,6 +61,54 @@ public class StringVisitor implements Visitor<Void, String> {
 	@Override
 	public String visit(CommandEncloses cmd, Void ctx) {
 		return visit(cmd.clause, ctx);
+	}
+
+	@Override
+	public String visit(ClauseRetType clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseType clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseVarType clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseLoop clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseBranch clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseImport clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseModifier clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visit(ClauseOperator clause, Void ctx) {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 
 }

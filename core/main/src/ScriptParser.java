@@ -21,9 +21,9 @@
  * clause-modifier   := "modifier:" java-modifier ("," java-modifier)* ";"
  * java-modifier     := ("public" | "private" | "protected" | "static" | "final" | "abstract" | "volatile" | "synchronized" | "class")
  * clause-loop       := "loop:" java-loop ("," java-loop)* ";" 
- * java-loop         := ("while" | "do" | "for" | "break" | "continue")
+ * java-loop         := ("while" | "do" | "for" | "foreach" | "break" | "continue")
  * clause-branch     := "branch:" java-branch ("," java-branch)* ";" 
- * java-branch       := ("switch" | "if" | "?:")
+ * java-branch       := ("switch" | "if")
  * clause-operator   := "operator:" java-operator ("," java-operator)* ";" 
  * java-operator     := (java-ternaryop | java-binaryop | java-unaryop)
  * java-unaryop      := ("+" | "-" | "/" | "*" | "%" | "|" | "&" | "=" | "!" | "^" | "~")
@@ -32,7 +32,7 @@
  * clause-import     := "import:" java-import ("," java-import)* ";"
  * java-import       := [a-zA-Z] ("." [a-zA-Z]* | ".*")
  * 
- * comments  := '#'[^\n]*
+ * comments  := "#" [^\n]*
  * spaces    := [ \n\r\t]+ | comments
  * 
  */
@@ -104,14 +104,15 @@ public class ScriptParser {
 
 	public static Parser<JavaArgs> javaBranch = choice(
 	    	seq(sp, token(lit("switch"), "switch"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)), 
-	    	seq(sp, token(lit("if"), "if"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("?:"), "?:"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)) 
+	    	seq(sp, token(lit("if"), "if"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto))
+	    	//seq(sp, token(lit("?:"), "?:"), (Void r1, Symbol r2) -> new JavaLoop(r2.pos, r2.texto)) 
    		);
 	
 	public static Parser<JavaArgs> javaLoop = choice(
 	    	seq(sp, token(lit("while"), "while"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)), 
 	    	seq(sp, token(lit("do"), "do"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("for"), "for"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)), 
+	    	seq(sp, token(lit("for"), "for"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("foreach"), "foreach"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("break"), "break"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("continue"), "continue"), (Void r1, Symbol r2) -> new JavaBranch(r2.pos, r2.texto)) 
    		);
@@ -123,6 +124,7 @@ public class ScriptParser {
 	    	seq(sp, token(lit("-"), "-"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("/"), "/"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("*"), "*"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("="), "="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("%"), "%"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
    		);
 	

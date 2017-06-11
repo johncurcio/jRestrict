@@ -1,23 +1,25 @@
 files {
-    Main.java;
     Foo.java;
 }
  
 encloses{
     type: int, boolean, float;
-    branch: ?:;
     import: java.util.mooligan.get.Bat;
 }
 
 prohibits{
-    modifier: public, static, class;
-    loop: while, break;
+	import: java.util.*;
+	operator: ==;
+    modifier: private, static;
     vartype: double;
+    type: int;
+    returntype: void;
+    loop: continue, do;
+    branch: if;
 }
 
 # declaring all clauses that MUST be on my java file
 requires{
     type: int, boolean, float;
-    returntype: void;
     operator: +, ++, >>>=, >>>, <<, <=, --;
 }
