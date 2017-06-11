@@ -25,12 +25,12 @@
  * clause-branch     := "branch:" java-branch ("," java-branch)* ";" 
  * java-branch       := ("switch" | "if" | "?:")
  * clause-operator   := "operator:" java-operator ("," java-operator)* ";" 
- * java-operator     := (java-arithmeticop | java-assignmentop | java-bitwiseop | java-boolop | java-combinedop)
- * java-arithmeticop := ("+" | "-" | "/" | "*" | "%")
- * java-combinedop   := (">>>=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | "&=" | "^=" | "|=")
- * java-assignmentop := ("=" | "++" | "--")
- * java-bitwiseop    := ("|" | "&" | "^" | "~" | ">>" | "<<" | ">>>") 
- * java-boolop       := ("&&" | "||" | "==" | "<=" | ">=" | "!=" | "!")
+ * java-operator     := (java-ternaryop | java-binaryop | java-unaryop)
+ * java-unaryop      := ("+" | "-" | "/" | "*" | "%" | "|" | "&" | "=" | "!" | "^" | "~")
+ * java-binaryop     := ("++" | "--" | ">>" | "<<" | "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "^=" | "|=" | "&&" | "||" | "==" | "<=" | ">=" | "!=")
+ * java-ternaryop    := (">>>=" | ">>>" | "<<=" | ">>=")
+ * clause-import     := "import:" java-import ("," java-import)* ";"
+ * java-import       := [a-zA-Z] ("." [a-zA-Z]* | ".*")
  * 
  * comments  := '#'[^\n]*
  * spaces    := [ \n\r\t]+ | comments
@@ -64,6 +64,7 @@ public class ScriptParser {
 	public static Parser<Symbol> LOOP      = seqr(sp, kw("loop", "lp"));
 	public static Parser<Symbol> BRANCH    = seqr(sp, kw("branch", "br"));
 	public static Parser<Symbol> OPERATOR  = seqr(sp, kw("operator", "op"));
+	public static Parser<Symbol> IMPORT    = seqr(sp, kw("import", "im"));
 		
 	/*Defining symbols which will be used in my language*/
 	public static Parser<Symbol> lbracket = seqr(sp, token(lit("{"), "{"));	
@@ -71,10 +72,10 @@ public class ScriptParser {
 	public static Parser<Symbol> semicol  = seqr(sp, token(lit(";"), ";"));
 	public static Parser<Symbol> comma    = seqr(sp, token(lit(","), ","));
 	public static Parser<Symbol> dots     = seqr(sp, token(lit(":"), ":"));
+	public static Parser<Symbol> dot      = seqr(sp, token(lit("."), "."));
 	
 	/*Defining instructions for my language*/
-	public static Parser<Symbol> filename   = seq(sp, token(seq(plus(cls(Character::isAlphabetic)), 
-			lit(".java")), "filename"), semicol, (r1,r2,r3)->r2);
+	public static Parser<Symbol> filename   = seq(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java")), "filename"), semicol, (r1,r2,r3)->r2);
 	
 	/*Defining my java accepted dictionaries*/
 	public static Parser<JavaArgs> javaType = choice(
@@ -116,55 +117,69 @@ public class ScriptParser {
    		);
 	
 	
-	
-	public static Parser<JavaArgs> javaArithOp = choice(
-			seq(sp, token(lit("="), "="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	//operators need to be ordered from bigger to smaller in length 
+	public static Parser<JavaArgs> javaUnaryArith = choice(
 	    	seq(sp, token(lit("+"), "+"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("-"), "-"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("/"), "/"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("*"), "*"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("%"), "%"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
    		);
-	public static Parser<JavaArgs> javaAssignOp = choice(
-	    	seq(sp, token(lit("="), "="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("++"), "++"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("--"), "--"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
-   		);
-	public static Parser<JavaArgs> javaBitwiseOp = choice(
+	
+	public static Parser<JavaArgs> javaUnaryBool = choice(
 	    	seq(sp, token(lit("|"), "|"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("&"), "&"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("~"), "~"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("^"), "^"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
-	    	//seq(sp, token(lit("<<"), "<<"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit(">>"), ">>"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit(">>>"), ">>>"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
-   		);
-	public static Parser<JavaArgs> javaBoolOp = choice(
-			//seq(sp, token(lit("&&"), "&&"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit("||"), "||"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit("=="), "=="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit("!="), "!="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("^"), "^"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("!"), "!"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("<"), "<"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit(">"), ">"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit("<="), "<="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	//seq(sp, token(lit(">="), ">="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("!"), "!"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
+	    	seq(sp, token(lit(">"), ">"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
    		);
-	public static Parser<JavaArgs> javaCombinedOp = choice(
+	
+	public static Parser<JavaArgs> javaUnaryOperator = choice(javaUnaryArith, javaUnaryBool);
+	
+	public static Parser<JavaArgs> javaBinaryBool = choice(
+			seq(sp, token(lit("&&"), "&&"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("||"), "||"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("=="), "=="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("!="), "!="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("<="), "<="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit(">="), ">="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("|="), "|="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("&="), "&="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("<<"), "<<"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit(">>"), ">>"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
+   		);
+	
+	public static Parser<JavaArgs> javaBinaryArith = choice(
+	    	seq(sp, token(lit("++"), "++"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit("--"), "--"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 			seq(sp, token(lit("+="), "+="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("-="), "-="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("/="), "/="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("*="), "*="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("%="), "%="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("|="), "|="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("&="), "&="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit(">>>="), ">>>="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("^="), "^="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("<<="), "<<="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
-	    	seq(sp, token(lit(">>="), ">>="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
+	    	seq(sp, token(lit("^="), "^="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
    		);
 	
-	public static Parser<JavaArgs> javaOperator = choice(javaArithOp, javaBitwiseOp, javaBoolOp);
+	public static Parser<JavaArgs> javaBinaryOperator  = choice(javaBinaryBool, javaBinaryArith);
+	
+	public static Parser<JavaArgs> javaTernaryOperator = choice(
+			seq(sp, token(lit(">>>="), ">>>="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+			seq(sp, token(lit(">>>"), ">>>"), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+			seq(sp, token(lit("<<="), "<<="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto)),
+	    	seq(sp, token(lit(">>="), ">>="), (Void r1, Symbol r2) -> new JavaOperator(r2.pos, r2.texto))
+   		);
+	    	
+	public static Parser<JavaArgs> javaOperator = choice(javaTernaryOperator, javaBinaryOperator, javaUnaryOperator);
+	
+	public static Parser<Symbol> piece  = seqr(sp, token(seq(sp, plus(cls(Character::isAlphabetic))), "importpiece"));
+	public static Parser<JavaArgs> javaImport = seq(sp, 
+				piece, 
+				stars(seq(sp, dot, piece, (r1, r2, r3) -> new String(r2.texto+r3.texto))),
+				opt(token(lit(".*"), ".*")),
+				(r1, r2, r3, r4) -> new JavaImport(r2.pos, r2.texto+r3, r4 == null ? "" : r4.texto)
+			);
 	
 	/*Defining my clauses*/
 	public static Parser<Clause> clauseType     = seq(TYPE, dots, listof(javaType, comma), semicol, (r1, r2, r3, r4) -> new ClauseType(r4.pos, r1.texto, r3));
@@ -174,10 +189,13 @@ public class ScriptParser {
 	public static Parser<Clause> clauseLoop     = seq(LOOP, dots, listof(javaLoop, comma), semicol, (r1, r2, r3, r4) -> new ClauseLoop(r4.pos, r1.texto, r3));
 	public static Parser<Clause> clauseBranch   = seq(BRANCH, dots, listof(javaBranch, comma), semicol, (r1, r2, r3, r4) -> new ClauseBranch(r4.pos, r1.texto, r3));
 	public static Parser<Clause> clauseOperator = seq(OPERATOR, dots, listof(javaOperator, comma), semicol, (r1, r2, r3, r4) -> new ClauseOperator(r4.pos, r1.texto, r3));
+	public static Parser<Clause> clauseImport   = seq(IMPORT, dots, listof(javaImport, comma), semicol, (r1, r2, r3, r4) -> new ClauseImport(r4.pos, r1.texto, r3));
 
+	
 	public static Parser<Clause> clauses        = choice(clauseType, clauseRetType, 
 														clauseVarType, clauseModifier, 
-														clauseLoop, clauseBranch, clauseOperator);
+														clauseLoop, clauseBranch, clauseOperator,
+														clauseImport);
 	
 	/*Defining the main commands*/
 	public static Parser<List<CommandFiles>> files          = seq(FILES, lbracket, 

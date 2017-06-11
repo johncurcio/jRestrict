@@ -6,6 +6,7 @@ files {
 encloses{
     type: int, boolean, float;
     branch: ?:;
+    import: java.util.mooligan.get.Bat;
 }
 
 prohibits{
@@ -18,5 +19,5 @@ prohibits{
 requires{
     type: int, boolean, float;
     returntype: void;
-    operator: +, ++;
+    operator: +, ++, >>>=, >>>, <<, <=, --;
 }
