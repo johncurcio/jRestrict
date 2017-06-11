@@ -10,4 +10,8 @@ public interface Parser<T> {
 	public static <T> Parser<List<T>> epslist() {
 		return (err, ent) -> new Result<>(new ArrayList<>(), ent); 
 	}
+	
+	public static <T> Parser<String> epsstring() {
+		return (err, ent) -> new Result<>(new String(), ent); 
+	}
 }

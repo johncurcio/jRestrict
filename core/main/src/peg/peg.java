@@ -17,6 +17,10 @@ public class peg {
 	public static Parser<Void> starv(Parser<?> p) {
 		return new StarVoid(p);
 	}
+	
+	public static Parser<String> stars(Parser<?> p) {
+		return new StarString(p);
+	}
 
 	public static <T> Parser<List<T>> plus(Parser<? extends T> p) {
 		return seq(p, star(p), (T x, List<T> xs) -> {
