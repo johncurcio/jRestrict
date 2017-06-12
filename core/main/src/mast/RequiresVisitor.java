@@ -34,7 +34,6 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 	
 	final List<String> errors;
 	
-	String argument = "";
 	String filename = "";
 	CompilationUnit compilationUnit;
 
