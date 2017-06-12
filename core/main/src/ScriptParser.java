@@ -78,6 +78,7 @@ public class ScriptParser {
 	public static Parser<Symbol> filename   = seq(sp, token(seq(plus(cls(Character::isAlphabetic)), lit(".java")), "filename"), semicol, (r1,r2,r3)->r2);
 	
 	/*Defining my java accepted dictionaries*/
+	public static Parser<Symbol> javaIdentifier = token(seq(cls(Character::isAlphabetic), star(cls(Character::isJavaIdentifierPart))), "JavaIdentifier");
 	public static Parser<JavaArgs> javaType = choice(
 		    	seq(sp, token(lit("int"), "int"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
 		    	seq(sp, token(lit("boolean"), "boolean"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
@@ -88,7 +89,7 @@ public class ScriptParser {
 		    	seq(sp, token(lit("short"), "short"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
 		    	seq(sp, token(lit("byte"), "byte"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
 		    	seq(sp, token(lit("void"), "void"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
-		    	seq(sp, token(seq(cls(Character::isAlphabetic), plus(cls(Character::isJavaIdentifierPart))), "JavaIdentifier"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
+		    	seq(sp, javaIdentifier, (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
        		);
 	
 	public static Parser<JavaArgs> javaModifier = choice(
