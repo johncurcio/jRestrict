@@ -138,6 +138,9 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
 		return null;
 	}
 
+	/**
+	 * @TODO: currently types such as List<Object> or char[] are not recognized nor accepted by jRestrict
+	 */
 	@Override
 	public Void visit(ClauseVarType clause, Void ctx) {
 		new VoidVisitorAdapter<Object>() {
