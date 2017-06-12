@@ -5,7 +5,7 @@ public class StarString implements Parser<String> {
 	
 	public StarString(Parser<?> p) {
 		sp = new OrdChoice<String>(new Seq<>(p, this, (x, xs) -> {
-			xs += x;
+			xs = x + xs;
 			return xs;
 		}), Parser.epsstring());
 	}

@@ -11,10 +11,14 @@ public class BindingVisitor implements Visitor<Void, Void> {
 	
 	String argument = "";
 	ProhibitsVisitor prohibitsVisitor;
-
+	RequiresVisitor requiresVisitor;
+	EnclosesVisitor enclosesVisitor;
+	
 	public BindingVisitor(List<String> errors) {
 		this.errors = errors;
 		prohibitsVisitor = new ProhibitsVisitor(errors);
+		requiresVisitor = new RequiresVisitor(errors);
+		enclosesVisitor = new EnclosesVisitor(errors);
 	}
 
 	@Override
@@ -39,7 +43,8 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		this.sProhibits = script.sProhibits;
 		this.sRequires = script.sRequires;
 		script.visit(prohibitsVisitor, ctx);
-		
+		script.visit(requiresVisitor, ctx);
+		script.visit(enclosesVisitor, ctx);
 		return null;
 	}	
 

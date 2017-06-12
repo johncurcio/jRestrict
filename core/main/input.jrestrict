@@ -3,23 +3,25 @@ files {
 }
  
 encloses{
-    type: int, boolean, float;
-    import: java.util.mooligan.get.Bat;
+    returntype: int, boolean, float, void;
+    import: java.util.Map;
 }
 
 prohibits{
-	import: java.util.*;
-	operator: ==;
-    modifier: private, static;
-    vartype: double;
-    type: int;
-    returntype: void;
-    loop: continue, do;
-    branch: if;
+	#import: java.util.*;
+	#operator: ==;
+    #modifier: private, static;
+    #vartype: double;
+    #type: int;
+    #returntype: void;
+    #loop: continue, do;
+    #branch: if;
 }
 
 # declaring all clauses that MUST be on my java file
 requires{
-    type: int, boolean, float;
-    operator: +, ++, >>>=, >>>, <<, <=, --;
+    #type: int, boolean, float;
+    #returntype: double;
+    #operator: +, --;
+    #loop: break;
 }

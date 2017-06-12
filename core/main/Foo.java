@@ -1,7 +1,6 @@
 package mast;
 
 import java.util.HashSet;
-import java.applet.*;
 
 public class Main {
 	/*private static class AAA{
@@ -11,12 +10,13 @@ public class Main {
 	boolean b = 100 == 10;
 
 	public int a(){
-		double j = 1;
+		double j = 1 + 1;
 		if (j > 1){
 			return 2;
 		}
 		do{
-			j++;
+			j--;
+			continue;
 		}while(j < 10);
 		
 		return 1;

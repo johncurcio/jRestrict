@@ -30,10 +30,6 @@ import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class ProhibitsVisitor implements Visitor<Void, Void> {
-	public Scope<CommandSymbol> sRequires;
-	public Scope<CommandSymbol> sProhibits;
-	public Scope<CommandSymbol> sEncloses;
-	public Scope<FileSymbol> sFiles;
 	final List<String> errors;
 	
 	String argument = "";
@@ -65,18 +61,8 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(Script script, Void ctx) {
-		this.sEncloses = script.sEncloses;
-		this.sFiles = script.sFiles;
-		this.sProhibits = script.sProhibits;
-		this.sRequires = script.sRequires;
 		for(CommandFiles fi: script.files) {
 			fi.visit(this, ctx);
-		}
-		for(CommandEncloses en: script.enclosement) {
-			en.visit(this, ctx);
-		}
-		for(CommandRequires req: script.requirements) {
-			req.visit(this, ctx);
 		}
 		for(CommandProhibits pb: script.prohibitions) {
 			pb.visit(this, ctx);
