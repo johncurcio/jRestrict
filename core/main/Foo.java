@@ -1,9 +1,7 @@
 package mast;
 
 public class Main {
-	/*private static class AAA{
-		
-	}*/
+	Object a = null;
 	private int a = 10;
 	boolean b = 100 == 10;
 

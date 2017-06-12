@@ -17,9 +17,9 @@
  * clause-type       := "type:" java-type ("," java-type)* ";" 
  * clause-returntype := "returntype:" java-type ("," java-type)* ";" 
  * clause-vartype    := "vartype:" java-type ("," java-type)* ";" 
- * java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long" | "void")
+ * java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long" | "void" | JavaIdentifier)
  * clause-modifier   := "modifier:" java-modifier ("," java-modifier)* ";"
- * java-modifier     := ("public" | "private" | "protected" | "static" | "final" | "abstract" | "volatile" | "synchronized" | "class")
+ * java-modifier     := ("public" | "private" | "protected" | "static" | "final" | "abstract" | "volatile" | "synchronized")
  * clause-loop       := "loop:" java-loop ("," java-loop)* ";" 
  * java-loop         := ("while" | "do" | "for" | "foreach" | "break" | "continue")
  * clause-branch     := "branch:" java-branch ("," java-branch)* ";" 
@@ -87,7 +87,8 @@ public class ScriptParser {
 		    	seq(sp, token(lit("long"), "long"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
 		    	seq(sp, token(lit("short"), "short"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)), 
 		    	seq(sp, token(lit("byte"), "byte"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
-		    	seq(sp, token(lit("void"), "void"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
+		    	seq(sp, token(lit("void"), "void"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto)),
+		    	seq(sp, token(seq(cls(Character::isAlphabetic), plus(cls(Character::isJavaIdentifierPart))), "JavaIdentifier"), (Void r1, Symbol r2) -> new JavaType(r2.pos, r2.texto))
        		);
 	
 	public static Parser<JavaArgs> javaModifier = choice(
@@ -98,8 +99,8 @@ public class ScriptParser {
 	    	seq(sp, token(lit("final"), "final"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)), 
 	    	seq(sp, token(lit("abstract"), "abstract"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)),
 	    	seq(sp, token(lit("volatile"), "volatile"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)), 
-	    	seq(sp, token(lit("synchronized"), "synchronized"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto)),
-	    	seq(sp, token(lit("class"), "class"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto))
+	    	seq(sp, token(lit("synchronized"), "synchronized"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto))
+	    	//seq(sp, token(lit("class"), "class"), (Void r1, Symbol r2) -> new JavaModifier(r2.pos, r2.texto))
    		);
 
 	public static Parser<JavaArgs> javaBranch = choice(

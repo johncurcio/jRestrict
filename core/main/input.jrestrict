@@ -1,20 +1,20 @@
 files {
     Foo.java;
-    Bar.java;
+    #Bar.java;
 }
  
 encloses{
-    returntype: boolean, float, void;
-    import: java.util.Map;
+    #returntype: boolean, float, void;
+    #import: java.util.Map;
 }
 
 prohibits{
 	#import: java.util.*;
 	#operator: ==;
     #modifier: private, static;
-    #vartype: double;
+    vartype: Object;
     #type: int;
-    returntype: void;
+    #returntype: void, Object;
     #loop: continue, do;
     #branch: if;
 }
@@ -22,7 +22,7 @@ prohibits{
 # declaring all clauses that MUST be on my java file
 requires{
     #type: int, boolean, float;
-    returntype: double;
+    #returntype: double;
     #operator: +, --;
     #loop: break;
 }
