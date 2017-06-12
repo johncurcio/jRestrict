@@ -35,6 +35,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 	final List<String> errors;
 	
 	String argument = "";
+	String filename = "";
 	CompilationUnit compilationUnit;
 
 	public RequiresVisitor(List<String> errors) {
@@ -44,9 +45,10 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(CommandFiles fi, Void ctx) {
 		try {
+			this.filename = fi.filename;
 			compilationUnit = JavaParser.parse(new String(Files.readAllBytes(Paths.get(fi.filename))));
 		} catch (IOException e) {
-			throw new RuntimeException("File not found or not compatible.");
+			throw new RuntimeException(fi.filename + " file not found or not compatible.");
 		}
 		return null;
 	}
@@ -89,7 +91,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!decltypes.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -116,7 +118,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!decltypes.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -134,7 +136,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!decltypes.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -189,7 +191,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!declloops.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -216,7 +218,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!declbranches.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -234,7 +236,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!declimports.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -271,7 +273,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!declmodifiers.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -306,7 +308,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
             if (!decloperators.contains(arg.arg)){
-            	errors.add("[jRestrict] java file does not contain required " + clause.type + " (" + arg.arg + ")");
+            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
             }
 		}
 		return null;
@@ -316,9 +318,9 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 	public Void visit(Script script, Void ctx) {
 		for(CommandFiles fi: script.files) {
 			fi.visit(this, ctx);
-		}
-		for(CommandRequires en: script.requirements) {
-			en.visit(this, ctx);
+			for(CommandRequires en: script.requirements) {
+				en.visit(this, ctx);
+			}
 		}
 		return null;
 	}

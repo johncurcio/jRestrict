@@ -1,7 +1,5 @@
 package mast;
 
-import java.util.HashSet;
-
 public class Main {
 	/*private static class AAA{
 		

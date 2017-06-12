@@ -34,7 +34,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	final List<String> errors;
 	
-	String argument = "";
+	String filename = "";
 	CompilationUnit compilationUnit;
 
 	public EnclosesVisitor(List<String> errors) {
@@ -44,9 +44,10 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(CommandFiles fi, Void ctx) {
 		try {
+			this.filename = fi.filename;
 			compilationUnit = JavaParser.parse(new String(Files.readAllBytes(Paths.get(fi.filename))));
 		} catch (IOException e) {
-			throw new RuntimeException("File not found or not compatible.");
+			throw new RuntimeException(fi.filename + " file not found or not compatible.");
 		}
 		return null;
 	}
@@ -89,7 +90,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: decltypes){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -116,7 +117,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: decltypes){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -134,7 +135,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: decltypes){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -189,7 +190,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: declloops){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -216,7 +217,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: declbranches){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -245,7 +246,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 				}
 			}
 			if (!accept){
-				errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+				errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
 			}
 		}
 		return null;
@@ -282,7 +283,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: declmodifiers){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -317,7 +318,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 		}.visit(compilationUnit, null);
 		for (String decl: decloperators){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] java file contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
             }
 		}
 		return null;
@@ -327,10 +328,10 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	public Void visit(Script script, Void ctx) {
 		for(CommandFiles fi: script.files) {
 			fi.visit(this, ctx);
-		}
-		for(CommandEncloses en: script.enclosement) {
-			en.visit(this, ctx);
-		}
+			for(CommandEncloses en: script.enclosement) {
+				en.visit(this, ctx);
+			}
+		}		
 		return null;
 	}
 

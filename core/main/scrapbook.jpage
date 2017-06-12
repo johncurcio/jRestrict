@@ -1,4 +1,3 @@
 ScriptDriver.main(new String[] { "input.jrestrict" });
 
 return ScriptDriver.read("input.jrestrict");
-

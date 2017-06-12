@@ -33,6 +33,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
 	final List<String> errors;
 	
 	String argument = "";
+	String filename = "";
 	CompilationUnit compilationUnit;
 
 	public ProhibitsVisitor(List<String> errors) {
@@ -42,9 +43,10 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(CommandFiles fi, Void ctx) {
 		try {
+			this.filename = fi.filename;
 			compilationUnit = JavaParser.parse(new String(Files.readAllBytes(Paths.get(fi.filename))));
 		} catch (IOException e) {
-			throw new RuntimeException("File not found or not compatible.");
+			throw new RuntimeException(fi.filename + " file not found or not compatible.");
 		}
 		return null;
 	}
@@ -58,14 +60,14 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
 	public Void visit(Clause cl, Void ctx) {
 		return null;
 	}
-
+	
 	@Override
 	public Void visit(Script script, Void ctx) {
 		for(CommandFiles fi: script.files) {
 			fi.visit(this, ctx);
-		}
-		for(CommandProhibits pb: script.prohibitions) {
-			pb.visit(this, ctx);
+			for(CommandProhibits pb: script.prohibitions) {
+				pb.visit(this, ctx);
+			}
 		}
 		return null;
 	}	
@@ -97,7 +99,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(MethodDeclaration n, Object xxx) {
                 if (n.getType().toString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -113,7 +115,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
                 if (n.getType().toString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
                 	String location = n.getParentNode() ==  null ? n.toString() : n.getParentNode().get().toString(); 
-                	errors.add("[jRestrict] java file contains prohibited variable " + clause.type + " (" + argument + ") at " + pos  + ": " + location);
+                	errors.add("[jRestrict] " + filename + " contains prohibited variable " + clause.type + " (" + argument + ") at " + pos  + ": " + location);
                 }
                 super.visit(n, null);
             }
@@ -121,13 +123,13 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(MethodDeclaration n, Object xxx) {
                 if (n.getType().toString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited method " + clause.type + " (" + argument + ") at " + pos  + ": " + n);;
+                	errors.add("[jRestrict] " + filename + " contains prohibited method " + clause.type + " (" + argument + ") at " + pos  + ": " + n);;
                 }
                 for (Parameter parameters: n.getParameters()){
                 	String param = parameters.getType().toString();
                 	if (param.equals(argument)){
                 		String pos = n.getBegin().get().toString();
-                		errors.add("[jRestrict] java file contains prohibited parameters " + clause.type + " (" + argument + ") at " + pos  + ": " + n);;
+                		errors.add("[jRestrict] " + filename + " contains prohibited parameters " + clause.type + " (" + argument + ") at " + pos  + ": " + n);;
                 	}
                 }
                 super.visit(n, null);
@@ -144,7 +146,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
                 if (n.getType().toString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
                 	String location = n.getParentNode() ==  null ? n.toString() : n.getParentNode().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + location);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + location);
                 }
                 super.visit(n, null);
             }
@@ -159,7 +161,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(ContinueStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("continue")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -167,7 +169,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(BreakStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("break")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -175,7 +177,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(WhileStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("while")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -183,7 +185,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(ForStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("for")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -191,7 +193,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(DoStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("do")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -199,7 +201,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(ForeachStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("foreach")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -214,7 +216,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(IfStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("if")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -222,7 +224,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(SwitchStmt n, Object xxx) {
                 if (!n.toString().equals("") && argument.equals("switch")){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -237,7 +239,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(ImportDeclaration n, Object xxx) {
                 if (argument.contains(n.getNameAsString()) || n.getNameAsString().contains(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -254,7 +256,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             		String modifier = m.toString().toLowerCase();
 	                if (modifier.equals(argument)){
 	                	String pos = n.getBegin().get().toString();
-	                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+	                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
 	                }
             	}
                 super.visit(n, null);
@@ -265,7 +267,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             		String modifier = m.toString().toLowerCase();
 	                if (modifier.equals(argument)){
 	                	String pos = n.getBegin().get().toString();
-	                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+	                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
 	                }
             	}
                 super.visit(n, null);
@@ -276,7 +278,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             		String modifier = m.toString().toLowerCase();
 	                if (modifier.equals(argument)){
 	                	String pos = n.getBegin().get().toString();
-	                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+	                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
 	                }
             	}
                 super.visit(n, null);
@@ -292,7 +294,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(AssignExpr n, Object xxx) {
                 if (n.getOperator().asString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -300,7 +302,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(UnaryExpr n, Object xxx) {
                 if (n.getOperator().asString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -308,7 +310,7 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(BinaryExpr n, Object xxx) {
                 if (n.getOperator().asString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] java file contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
+                	errors.add("[jRestrict] " + filename + " contains prohibited " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 super.visit(n, null);
             }

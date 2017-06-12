@@ -1,9 +1,10 @@
 files {
     Foo.java;
+    Bar.java;
 }
  
 encloses{
-    returntype: int, boolean, float, void;
+    returntype: boolean, float, void;
     import: java.util.Map;
 }
 
@@ -13,7 +14,7 @@ prohibits{
     #modifier: private, static;
     #vartype: double;
     #type: int;
-    #returntype: void;
+    returntype: void;
     #loop: continue, do;
     #branch: if;
 }
@@ -21,7 +22,7 @@ prohibits{
 # declaring all clauses that MUST be on my java file
 requires{
     #type: int, boolean, float;
-    #returntype: double;
+    returntype: double;
     #operator: +, --;
     #loop: break;
 }
