@@ -27,9 +27,9 @@ A special clause ``file{ <file1.java>; <file2.java>; ... }`` has been added to t
  clause-type       := "type:" java-type ("," java-type)* ";" 
  clause-returntype := "returntype:" java-type ("," java-type)* ";" 
  clause-vartype    := "vartype:" java-type ("," java-type)* ";" 
- java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long" | "void")
+ java-type         := ("int" | "double" | "boolean" | "float" | "char" | "byte" | "short" | "long" | "void"| JavaIdentifier)
  clause-modifier   := "modifier:" java-modifier ("," java-modifier)* ";"
- java-modifier     := ("public" | "private" | "protected" | "static" | "final" | "abstract" | "volatile" | "synchronized" | "class")
+ java-modifier     := ("public" | "private" | "protected" | "static" | "final" | "abstract" | "volatile" | "synchronized")
  clause-loop       := "loop:" java-loop ("," java-loop)* ";" 
  java-loop         := ("while" | "do" | "for" | "foreach" | "break" | "continue")
  clause-branch     := "branch:" java-branch ("," java-branch)* ";" 
