@@ -8,25 +8,49 @@ The syntax for a jscript file is composed of four main commands:
 
 ```markdown
 files {
-  # here comes a list of files that will be validated by jRestrict
+  # list of files that will be validated by jRestrict
 }
 requires {
-  # here comes a list of clauses that should be on every java file specified in files{}
+  # list of clauses that should be on every java file specified in files{}
 }
 encloses {
-  # here comes a list of clauses that encloses all clauses which can be used in the java files
+  # list of clauses that encloses all clauses which can be used in the java files
 }
 prohibits {
-  # here comes a list of clauses that cannot be used in the java files
+  # list of clauses that cannot be used in the java files
 }
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+#### Files
 
-### Jekyll Themes
+The files command accept a list of java files separated by ;. E.g:
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/johncurcio/jRestrict/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+```markdown
+files {
+  Foo.java;
+  Bar.java;
+}
+```
 
-### Support or Contact
+#### Encloses, Requires and Prohibits
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+These three commands accept a list of specific clauses made to validate some aspects of java files. The list of clauses is:
+
+```markdown
+type: <java-type>; - restricts a java type usage in the whole code. This includes return type, variable type and argument type.
+
+returntype: <java-type>; - restricts all methods from returning a java types defined here.
+
+vartype: <java-type>; - restricts all varibles from using this java type.
+
+operator: <java-operator>; - restricts the usage of java operators such as assignment.
+
+modifier: <java-modifier>; - restricts the usage of modifiers such as public, private and protected.
+
+import: <java-imports>; - restricts the usage of the import clause.
+
+loop: <java-loop>; - restricts the usage of loop, break and continue.
+
+branch: <java-branch>; - restricts the usage of if and switch. 
+```
+
