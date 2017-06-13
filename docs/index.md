@@ -1,29 +1,24 @@
-## Welcome to GitHub Pages
+## What is it?
 
-You can use the [editor on GitHub](https://github.com/johncurcio/jRestrict/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+jRestrict is a domain specific language built to restrict ``.java`` files into using only what's specified in a simple ``.jstrict`` script.  With jRestrict you can **prohibit** clauses from being used, **require** that a list of clauses is used or **enclose** your java file to a list of clauses. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Syntax
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The syntax for a jscript file is composed of four main commands: 
 
 ```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+files {
+  # here comes a list of files that will be validated by jRestrict
+}
+requires {
+  # here comes a list of clauses that should be on every java file specified in files{}
+}
+encloses {
+  # here comes a list of clauses that encloses all clauses which can be used in the java files
+}
+prohibits {
+  # here comes a list of clauses that cannot be used in the java files
+}
 ```
 
 For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
