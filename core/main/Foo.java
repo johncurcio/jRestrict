@@ -7,16 +7,15 @@ public class Main {
 	private int a = 10;
 	boolean b = 100 == 10;
 
-	public int a(){
+	protected int a(){
 		double j = 1 + 1;
 		if (j > 1){
 			return 2;
 		}
-		do{
+		while (j < 10){
 			j--;
 			continue;
-		}while(j < 10);
-		
+		}		
 		return 1;
 	}
 	

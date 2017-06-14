@@ -4,6 +4,7 @@ import java.a;
 
 public class Main {
 	public Integer soma(Integer a, Integer b){
+		while(a > 0){}
 		return new Integer(0);
 	}
 	

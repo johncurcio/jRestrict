@@ -4,23 +4,23 @@ files {
     Foo.java;
     Bar.java;
 }
- 
-encloses{
-    returntype: int, boolean, float, void;
-    import: java.util.*;
-}
 
 prohibits{
 	#operator: +, --, <<=, >>>=, *, /;
-    #modifier: private, static;
+    #modifier: protected, static;
     #vartype: Object;
     #type: boolean;
     #loop: continue, do;
     #branch: if;
 }
+ 
+encloses{
+    #returntype: int, boolean, float, void;
+    #import: java.util.*;
+}
 
 # declaring all clauses that MUST be on my java file
 requires{
     #type: int, void, float;
-    #loop: while;
+    loop: while;
 }
