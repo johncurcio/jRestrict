@@ -39,12 +39,8 @@ public class ScriptDriver {
 		String fname = args[0];
 		peg.Pair<mast.Script, List<String>> m = read(fname);
 		if (m != null){
-			System.out.println(">>>>>>>>>> DEBUG <<<<<<<<<<<");
-			System.out.println("> Files: " + m.x.files.toString());
-			System.out.println("> Requires: " + m.x.requirements.toString());
-			System.out.println("> Encloses: " + m.x.enclosement.toString());
-			System.out.println("> Prohibits: " + m.x.prohibitions.toString());
-			System.out.println("\n>>>>>>>>>> Script Visitor <<<<<<<<<<<");
+			System.out.println("The jscript has successfully validated all java files");
+			System.out.println("\n>>>>>>>>>> Script <<<<<<<<<<<");
 			System.out.println(m.x.toString());
 		}
 	}

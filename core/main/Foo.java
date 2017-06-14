@@ -1,7 +1,9 @@
 package mast;
 
+import java.util.HashSet;
+
 public class Main {
-	Object a = null;
+	Integer a = null;
 	private int a = 10;
 	boolean b = 100 == 10;
 
