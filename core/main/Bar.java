@@ -1,8 +1,16 @@
 package mast;
 
-import java.util.HashSet;
+import java.a;
 
 public class Main {
+	public Integer soma(Integer a, Integer b){
+		return new Integer(0);
+	}
+	
+	public Object soma(Integer a, Integer b){
+		return new Integer(0);
+	}
+	
 	public static void main(String[] args){
 		
 	}

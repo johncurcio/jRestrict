@@ -81,16 +81,20 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseRetType clause, Void ctx) {
 		List<String> decltypes = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(MethodDeclaration n, Object xxx) {
             	decltypes.add(n.getType().toString());
+            	String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + n);
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: decltypes){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;
@@ -99,12 +103,15 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseType clause, Void ctx) {
 		List<String> decltypes = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(MethodDeclaration n, Object xxx) {
             	decltypes.add(n.getType().toString());
             	for (Parameter parameters: n.getParameters()){
                 	String param = parameters.getType().toString();
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 	decltypes.add(param);
                 }
                 super.visit(n, null);
@@ -112,12 +119,16 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             @Override
             public void visit(VariableDeclarator n, Object xxx) {
             	decltypes.add(n.getType().toString());
+            	String location = n.getParentNode() ==  null ? n.toString() : n.getParentNode().get().toString();
+            	String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + location);
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: decltypes){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;
@@ -126,16 +137,21 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseVarType clause, Void ctx) {
 		List<String> decltypes = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(VariableDeclarator n, Object xxx) {
             	decltypes.add(n.getType().toString());
+            	String location = n.getParentNode() ==  null ? n.toString() : n.getParentNode().get().toString();
+            	String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + location);
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: decltypes){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;
@@ -144,11 +160,14 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseLoop clause, Void ctx) {
 		List<String> declloops = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(ContinueStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declloops.add("continue");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -156,6 +175,8 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(BreakStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declloops.add("break");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -163,6 +184,8 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(WhileStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declloops.add("while");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -170,6 +193,8 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(ForStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declloops.add("for");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -177,6 +202,8 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(DoStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declloops.add("do");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -184,13 +211,16 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(ForeachStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declloops.add("foreach");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: declloops){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;
@@ -199,11 +229,14 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseBranch clause, Void ctx) {
 		List<String> declbranches = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(IfStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declbranches.add("if");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
@@ -211,13 +244,16 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(SwitchStmt n, Object xxx) {
                 if (!n.toString().equals("")){
                 	declbranches.add("switch");
+                	String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
                 }
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: declbranches){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;
@@ -226,15 +262,19 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseImport clause, Void ctx) {
 		List<String> declimports = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(ImportDeclaration n, Object xxx) {
-                declimports.add(n.getNameAsString());                
+                declimports.add(n.getNameAsString());
+                String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + n);
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
 		
 		boolean accept;
+		int i = 0;
 		for (String decl: declimports){
 			accept = false;
 			for (JavaArgs ar: clause.args){
@@ -246,7 +286,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 				}
 			}
 			if (!accept){
-				errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+				errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
 			}
 		}
 		return null;
@@ -255,11 +295,14 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseModifier clause, Void ctx) {
 		List<String> declmodifiers = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(ClassOrInterfaceDeclaration n, Object xxx) {
             	for(Object m: n.getModifiers().toArray()){
             		String modifier = m.toString().toLowerCase();
+            		String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
             		declmodifiers.add(modifier);
             	}
                 super.visit(n, null);
@@ -268,6 +311,8 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(MethodDeclaration n, Object xxx) {
             	for(Object m: n.getModifiers().toArray()){
             		String modifier = m.toString().toLowerCase();
+            		String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
             		declmodifiers.add(modifier);
             	}
                 super.visit(n, null);
@@ -276,14 +321,17 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             public void visit(FieldDeclaration n, Object xxx) {
             	for(Object m: n.getModifiers().toArray()){
             		String modifier = m.toString().toLowerCase();
+            		String pos = n.getBegin().get().toString();
+                	declpos.add(pos  + ": " + n);
             		declmodifiers.add(modifier);
             	}
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: declmodifiers){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;
@@ -292,20 +340,27 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 	@Override
 	public Void visit(ClauseOperator clause, Void ctx) {
 		List<String> decloperators = new ArrayList<>();
+		List<String> declpos = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(AssignExpr n, Object xxx) {
             	decloperators.add(n.getOperator().asString());
+            	String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + n);
                 super.visit(n, null);
             }
             @Override
             public void visit(UnaryExpr n, Object xxx) {
             	decloperators.add(n.getOperator().asString());
+            	String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + n);
                 super.visit(n, null);
             }
             @Override
             public void visit(BinaryExpr n, Object xxx) {
             	decloperators.add(n.getOperator().asString());
+            	String pos = n.getBegin().get().toString();
+            	declpos.add(pos  + ": " + n);
                 super.visit(n, null);
             }
             @Override
@@ -316,9 +371,10 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
                 super.visit(a, null);
             }
 		}.visit(compilationUnit, null);
+		int i = 0;
 		for (String decl: decloperators){
             if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
             }
 		}
 		return null;

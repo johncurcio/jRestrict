@@ -11,16 +11,16 @@ encloses{
 }
 
 prohibits{
-	operator: +, --, <<=, >>>=, *, /;
-    modifier: private, static;
-    vartype: Object;
-    type: boolean;
-    loop: continue, do;
-    branch: if;
+	#operator: +, --, <<=, >>>=, *, /;
+    #modifier: private, static;
+    #vartype: Object;
+    #type: boolean;
+    #loop: continue, do;
+    #branch: if;
 }
 
 # declaring all clauses that MUST be on my java file
 requires{
-    type: int, void, float;
-    loop: while;
+    #type: int, void, float;
+    #loop: while;
 }

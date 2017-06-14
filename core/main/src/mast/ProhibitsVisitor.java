@@ -123,13 +123,13 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
             public void visit(MethodDeclaration n, Object xxx) {
                 if (n.getType().toString().equals(argument)){
                 	String pos = n.getBegin().get().toString();
-                	errors.add("[jRestrict] " + filename + " contains prohibited method " + clause.type + " (" + argument + ") at " + pos  + ": " + n);;
+                	errors.add("[jRestrict] " + filename + " contains prohibited method " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 }
                 for (Parameter parameters: n.getParameters()){
                 	String param = parameters.getType().toString();
                 	if (param.equals(argument)){
                 		String pos = n.getBegin().get().toString();
-                		errors.add("[jRestrict] " + filename + " contains prohibited parameters " + clause.type + " (" + argument + ") at " + pos  + ": " + n);;
+                		errors.add("[jRestrict] " + filename + " contains prohibited parameters " + clause.type + " (" + argument + ") at " + pos  + ": " + n);
                 	}
                 }
                 super.visit(n, null);

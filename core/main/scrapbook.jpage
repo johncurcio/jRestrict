@@ -1,3 +1,2 @@
 ScriptDriver.main(new String[] { "ex1.jstrict" });
 
-return ScriptDriver.read("input.jstrict");
