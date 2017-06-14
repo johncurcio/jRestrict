@@ -72,6 +72,10 @@ public class BindingVisitor implements Visitor<Void, Void> {
 				}
 			}
 		}
+		
+		if (cmd.clause.type.toString().equals("type")){
+			this.visit((ClauseType)cmd.clause, ctx);
+		}
 		return null;
 	}
 	
@@ -90,6 +94,14 @@ public class BindingVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(CommandEncloses cmd, Void ctx) {
+		CommandSymbol cm = this.sProhibits.resolve(cmd.clause.type);
+		if (cm != null){
+			for (JavaArgs arg: cm.clause.args){
+				if (!cmd.clause.args.toString().contains(arg.arg)){
+					errors.add("[ERROR] You're prohibiting a clause that's not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + "). Are you sure you meant to do this?" );
+				}
+			}
+		}
 		return null;
 	}
 
@@ -100,6 +112,23 @@ public class BindingVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseType clause, Void ctx) {
+		CommandSymbol vartype = this.sProhibits.resolve("vartype");
+		CommandSymbol returntype = this.sProhibits.resolve("returntype");
+		if (vartype != null){
+			for (JavaArgs arg: vartype.clause.args){
+				if (clause.args.toString().contains(arg.arg)){
+					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + clause.type + ": "+ arg.arg + "), (" + vartype.clause.type + ": "+ arg.arg + ")." );
+				}
+			}
+		}
+		if (returntype != null){
+			for (JavaArgs arg: returntype.clause.args){
+				if (clause.args.toString().contains(arg.arg)){
+					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + clause.type + ": "+ arg.arg + "), (" + returntype.clause.type + ": "+ arg.arg + ")." );
+				}
+			}
+		}
+		
 		return null;
 	}
 

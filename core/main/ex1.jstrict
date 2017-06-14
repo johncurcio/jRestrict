@@ -8,21 +8,22 @@ files {
 prohibits{
 	#operator: +, --, <<=, >>>=, *, /;
     #modifier: protected, static;
-    #vartype: Object;
-    #type: int, boolean;
+    returntype: Object;
+    vartype: Object;
+    type: int, Object, boolean;
     #loop: continue, do;
     #branch: if;
 }
  
 encloses{
-    #type: int, float, boolean;
+    #type: float, boolean;
     #vartype: void;
-    import: java.util.*;
-    loop: do;
+    #import: java.util.*;
+    #loop: do;
 }
 
 # declaring all clauses that MUST be on my java file
 requires{
-    #type: int, void, float;
+    type: Object, int, void, float;
     #loop: while;
 }
