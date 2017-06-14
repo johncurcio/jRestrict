@@ -68,7 +68,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		if (cm != null){
 			for (JavaArgs arg: cmd.clause.args){
 				if (!cm.clause.args.toString().contains(arg.arg)){
-					errors.add("[ERROR] You're requiring a clause not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + "). Are you sure you meant to do this?" );
+					errors.add("[ERROR] You're requiring a clause not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + ")." );
 				}
 			}
 		}
@@ -85,7 +85,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		if (cm != null){
 			for (JavaArgs arg: cm.clause.args){
 				if (cmd.clause.args.toString().contains(arg.arg)){
-					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + cmd.clause.type + ": "+ arg.arg + "). Are you sure you meant to do this?" );
+					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + cmd.clause.type + ": "+ arg.arg + ")." );
 				}
 			}
 		}
@@ -98,7 +98,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		if (cm != null){
 			for (JavaArgs arg: cm.clause.args){
 				if (!cmd.clause.args.toString().contains(arg.arg)){
-					errors.add("[ERROR] You're prohibiting a clause that's not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + "). Are you sure you meant to do this?" );
+					errors.add("[ERROR] You're prohibiting a clause that's not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + ")." );
 				}
 			}
 		}
