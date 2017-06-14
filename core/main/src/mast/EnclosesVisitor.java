@@ -80,21 +80,18 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseRetType clause, Void ctx) {
-		List<String> decltypes = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> decltypes = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(MethodDeclaration n, Object xxx) {
-            	decltypes.add(n.getType().toString());
             	String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + n);
+            	decltypes.add(new peg.Pair<String, String>(pos  + ": " + n, n.getType().toString()));
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: decltypes){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: decltypes){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;
@@ -102,33 +99,30 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseType clause, Void ctx) {
-		List<String> decltypes = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> decltypes = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(MethodDeclaration n, Object xxx) {
-            	decltypes.add(n.getType().toString());
+            	String pos = n.getBegin().get().toString();
+            	decltypes.add(new peg.Pair<String, String>(pos  + ": " + n, n.getType().toString()));
             	for (Parameter parameters: n.getParameters()){
                 	String param = parameters.getType().toString();
-                	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
-                	decltypes.add(param);
+                	pos = n.getBegin().get().toString();
+                	decltypes.add(new peg.Pair<String, String>(pos  + ": " + n, param));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(VariableDeclarator n, Object xxx) {
-            	decltypes.add(n.getType().toString());
             	String location = n.getParentNode() ==  null ? n.toString() : n.getParentNode().get().toString();
             	String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + location);
+            	decltypes.add(new peg.Pair<String, String>(pos  + ": " + location, n.getType().toString()));
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: decltypes){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: decltypes){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;
@@ -136,22 +130,19 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseVarType clause, Void ctx) {
-		List<String> decltypes = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> decltypes = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(VariableDeclarator n, Object xxx) {
-            	decltypes.add(n.getType().toString());
             	String location = n.getParentNode() ==  null ? n.toString() : n.getParentNode().get().toString();
             	String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + location);
+            	decltypes.add(new peg.Pair<String, String>(pos  + ": " + location, n.getType().toString()));
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: decltypes){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: decltypes){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;
@@ -159,68 +150,60 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseLoop clause, Void ctx) {
-		List<String> declloops = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> declloops = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(ContinueStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declloops.add("continue");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declloops.add(new peg.Pair<String, String>(pos  + ": " + n, "continue"));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(BreakStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declloops.add("break");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declloops.add(new peg.Pair<String, String>(pos  + ": " + n, "break"));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(WhileStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declloops.add("while");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declloops.add(new peg.Pair<String, String>(pos  + ": " + n, "while"));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(ForStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declloops.add("for");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declloops.add(new peg.Pair<String, String>(pos  + ": " + n, "for"));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(DoStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declloops.add("do");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declloops.add(new peg.Pair<String, String>(pos  + ": " + n, "do"));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(ForeachStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declloops.add("foreach");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declloops.add(new peg.Pair<String, String>(pos  + ": " + n, "foreach"));
                 }
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: declloops){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: declloops){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;
@@ -228,32 +211,28 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseBranch clause, Void ctx) {
-		List<String> declbranches = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> declbranches = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(IfStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declbranches.add("if");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declbranches.add(new peg.Pair<String, String>(pos  + ": " + n, "if"));
                 }
                 super.visit(n, null);
             }
             @Override
             public void visit(SwitchStmt n, Object xxx) {
                 if (!n.toString().equals("")){
-                	declbranches.add("switch");
                 	String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
+                	declbranches.add(new peg.Pair<String, String>(pos  + ": " + n, "switch"));
                 }
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: declbranches){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: declbranches){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;
@@ -261,24 +240,21 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseImport clause, Void ctx) {
-		List<String> declimports = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> declimports = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(ImportDeclaration n, Object xxx) {
-                declimports.add(n.getNameAsString());
                 String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + n);
+            	declimports.add(new peg.Pair<String, String>(pos  + ": " + n, n.getNameAsString()));
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
 		
 		boolean accept;
-		int i = 0;
-		for (String decl: declimports){
+		for (peg.Pair<String, String> decl: declimports){
 			accept = false;
 			for (JavaArgs ar: clause.args){
-				if (decl.contains(ar.arg)){
+				if (decl.y.contains(ar.arg)){
 					accept = true;
 				}
 				if (ar.arg.equals(decl)){
@@ -286,7 +262,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 				}
 			}
 			if (!accept){
-				errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+				errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
 			}
 		}
 		return null;
@@ -294,16 +270,14 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseModifier clause, Void ctx) {
-		List<String> declmodifiers = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> declmodifiers = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(ClassOrInterfaceDeclaration n, Object xxx) {
             	for(Object m: n.getModifiers().toArray()){
             		String modifier = m.toString().toLowerCase();
             		String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
-            		declmodifiers.add(modifier);
+            		declmodifiers.add(new peg.Pair<String, String>(pos  + ": " + n, modifier));
             	}
                 super.visit(n, null);
             }
@@ -312,8 +286,7 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             	for(Object m: n.getModifiers().toArray()){
             		String modifier = m.toString().toLowerCase();
             		String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
-            		declmodifiers.add(modifier);
+                	declmodifiers.add(new peg.Pair<String, String>(pos  + ": " + n, modifier));
             	}
                 super.visit(n, null);
             }
@@ -322,16 +295,14 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
             	for(Object m: n.getModifiers().toArray()){
             		String modifier = m.toString().toLowerCase();
             		String pos = n.getBegin().get().toString();
-                	declpos.add(pos  + ": " + n);
-            		declmodifiers.add(modifier);
+                	declmodifiers.add(new peg.Pair<String, String>(pos  + ": " + n, modifier));
             	}
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: declmodifiers){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: declmodifiers){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;
@@ -339,28 +310,24 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseOperator clause, Void ctx) {
-		List<String> decloperators = new ArrayList<>();
-		List<String> declpos = new ArrayList<>();
+		List<peg.Pair<String, String>> decloperators = new ArrayList<>();
 		new VoidVisitorAdapter<Object>() {
             @Override
             public void visit(AssignExpr n, Object xxx) {
-            	decloperators.add(n.getOperator().asString());
             	String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + n);
+            	decloperators.add(new peg.Pair<String, String>(pos  + ": " + n, n.getOperator().asString()));
                 super.visit(n, null);
             }
             @Override
             public void visit(UnaryExpr n, Object xxx) {
-            	decloperators.add(n.getOperator().asString());
             	String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + n);
+            	decloperators.add(new peg.Pair<String, String>(pos  + ": " + n, n.getOperator().asString()));;
                 super.visit(n, null);
             }
             @Override
             public void visit(BinaryExpr n, Object xxx) {
-            	decloperators.add(n.getOperator().asString());
             	String pos = n.getBegin().get().toString();
-            	declpos.add(pos  + ": " + n);
+            	decloperators.add(new peg.Pair<String, String>(pos  + ": " + n, n.getOperator().asString()));;
                 super.visit(n, null);
             }
             @Override
@@ -371,10 +338,9 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
                 super.visit(a, null);
             }
 		}.visit(compilationUnit, null);
-		int i = 0;
-		for (String decl: decloperators){
-            if (!clause.args.toString().contains(decl)){
-            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ") at " + declpos.get(i++));
+		for (peg.Pair<String, String> decl: decloperators){
+            if (!clause.args.toString().contains(decl.y)){
+            	errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl.y + ") at " + decl.x);
             }
 		}
 		return null;

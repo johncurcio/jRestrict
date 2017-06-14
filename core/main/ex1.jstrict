@@ -15,13 +15,14 @@ prohibits{
 }
  
 encloses{
-    type: int, float, boolean;
-    returntype: int, boolean, float, void;
+    #type: int, float, boolean;
+    #vartype: void;
     import: java.util.*;
+    loop: do;
 }
 
 # declaring all clauses that MUST be on my java file
 requires{
-    type: int, void, float;
-    loop: while;
+    #type: int, void, float;
+    #loop: while;
 }
