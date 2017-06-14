@@ -1,2 +1,2 @@
-ScriptDriver.main(new String[] { "ex1.jstrict" });
+ScriptDriver.main(new String[] { "syntaxError.jstrict" });
 

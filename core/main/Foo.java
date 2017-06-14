@@ -6,7 +6,7 @@ public class Main {
 	Integer a = null;
 	private int a = 10;
 	boolean b = 100 == 10;
-	boolean x,y;
+	boolean x, y = false;
 
 	protected int a(){
 		double j = 1 + 1;

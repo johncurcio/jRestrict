@@ -1,0 +1,22 @@
+# Input that shows some requirements not being fullfiled!
+
+files {
+    #Foo.java;
+    #Bar.java;
+}
+
+prohibits{
+    type: int, Object, boolean;
+}
+ 
+encloses{
+    loop: do;
+    type: int, void, float, boolean;
+}
+
+# declaring all clauses that MUST be on my java file
+requires{
+    type: Object, int, void, float;
+    returntype: boolean;
+    loop: while;
+}
