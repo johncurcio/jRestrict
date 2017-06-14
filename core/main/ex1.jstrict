@@ -6,11 +6,11 @@ files {
 }
 
 prohibits{
-	#operator: +, --, <<=, >>>=, *, /;
+	operator: +, --, <<=, *, /;
     #modifier: protected, static;
-    returntype: Object;
-    vartype: Object;
-    type: int, Object, boolean;
+    #returntype: Object;
+    #vartype: Object;
+    #type: int, Object, boolean;
     #loop: continue, do;
     #branch: if;
 }
@@ -24,6 +24,6 @@ encloses{
 
 # declaring all clauses that MUST be on my java file
 requires{
-    type: Object, int, void, float;
-    #loop: while;
+    #type: Object, int, void, float;
+    loop: while;
 }

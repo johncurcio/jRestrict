@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -318,11 +319,13 @@ public class ProhibitsVisitor implements Visitor<Void, Void> {
                 super.visit(n, null);
             }
             @Override
-            public void visit(FieldDeclaration n, Object xxx) {           	
-            	Expression value = n.getVariables().get(0).getInitializer().get();
-            	Expression target = new NameExpr(n.getVariables().get(0).getName());
-            	AssignExpr a = new AssignExpr(target, value, Operator.ASSIGN);
-                super.visit(a, null);
+            public void visit(FieldDeclaration n, Object xxx) { 
+            	if (n.getVariables().get(0).getInitializer().isPresent()){
+            		Expression value = n.getVariables().get(0).getInitializer().get();
+            		Expression target = new NameExpr(n.getVariables().get(0).getName());
+            		AssignExpr a = new AssignExpr(target, value, Operator.ASSIGN);
+            		super.visit(a, null);
+            	}
             }
 		}.visit(compilationUnit, null);
 		return null;
