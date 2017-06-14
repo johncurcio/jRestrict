@@ -3,6 +3,7 @@ package mast;
 import java.util.List;
 
 public class BindingVisitor implements Visitor<Void, Void> {
+	public Scope<CommandSymbol> cms;
 	public Scope<CommandSymbol> sRequires;
 	public Scope<CommandSymbol> sProhibits;
 	public Scope<CommandSymbol> sEncloses;
@@ -74,6 +75,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		}
 		
 		if (cmd.clause.type.toString().equals("type")){
+			this.cms = this.sProhibits;
 			this.visit((ClauseType)cmd.clause, ctx);
 		}
 		return null;
@@ -88,6 +90,10 @@ public class BindingVisitor implements Visitor<Void, Void> {
 					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + cmd.clause.type + ": "+ arg.arg + ")." );
 				}
 			}
+		}
+		if (cmd.clause.type.toString().equals("type")){
+			this.cms = this.sRequires;
+			this.visit((ClauseType)cmd.clause, ctx);
 		}
 		return null;
 	}
@@ -112,8 +118,8 @@ public class BindingVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseType clause, Void ctx) {
-		CommandSymbol vartype = this.sProhibits.resolve("vartype");
-		CommandSymbol returntype = this.sProhibits.resolve("returntype");
+		CommandSymbol vartype = this.cms.resolve("vartype");
+		CommandSymbol returntype = this.cms.resolve("returntype");
 		if (vartype != null){
 			for (JavaArgs arg: vartype.clause.args){
 				if (clause.args.toString().contains(arg.arg)){
