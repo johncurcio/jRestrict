@@ -30,7 +30,8 @@ public class ScriptDriver {
 		mast.BindingVisitor bv = new mast.BindingVisitor(res.y);
 		if(res.x != null){ 
 			res.x.visit(cv, null);
-			res.x.visit(bv, null);
+			if (res.y.isEmpty())
+				res.x.visit(bv, null);
 		}
 		return res;
 	}

@@ -42,19 +42,49 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		this.sFiles = script.sFiles;
 		this.sProhibits = script.sProhibits;
 		this.sRequires = script.sRequires;
-		script.visit(prohibitsVisitor, ctx);
-		script.visit(requiresVisitor, ctx);
-		script.visit(enclosesVisitor, ctx);
+		for(CommandEncloses en: script.enclosement) {
+			en.visit(this, ctx);
+		}
+		for(CommandRequires req: script.requirements) {
+			req.visit(this, ctx);
+		}
+		for(CommandProhibits pb: script.prohibitions) {
+			pb.visit(this, ctx);
+		}
+		/*for(CommandFiles fi: script.files) {
+			fi.visit(this, ctx);
+		}*/
+		if (errors.size() == 0){
+			script.visit(prohibitsVisitor, ctx);
+			script.visit(requiresVisitor, ctx);
+			script.visit(enclosesVisitor, ctx);
+		}
 		return null;
 	}	
 
 	@Override
 	public Void visit(CommandRequires cmd, Void ctx) {
+		CommandSymbol cm = this.sEncloses.resolve(cmd.clause.type);
+		if (cm != null){
+			for (JavaArgs arg: cmd.clause.args){
+				if (!cm.clause.args.toString().contains(arg.arg)){
+					errors.add("[ERROR] You're requiring a clause not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + "). Are you sure you meant to do this?" );
+				}
+			}
+		}
 		return null;
 	}
 	
 	@Override
 	public Void visit(CommandProhibits cmd, Void ctx) {
+		CommandSymbol cm = this.sRequires.resolve(cmd.clause.type);
+		if (cm != null){
+			for (JavaArgs arg: cm.clause.args){
+				if (cmd.clause.args.toString().contains(arg.arg)){
+					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + cmd.clause.type + ": "+ arg.arg + "). Are you sure you meant to do this?" );
+				}
+			}
+		}
 		return null;
 	}
 

@@ -9,18 +9,19 @@ prohibits{
 	#operator: +, --, <<=, >>>=, *, /;
     #modifier: protected, static;
     #vartype: Object;
-    #type: boolean;
+    #type: int, boolean;
     #loop: continue, do;
     #branch: if;
 }
  
 encloses{
-    #returntype: int, boolean, float, void;
-    #import: java.util.*;
+    type: int, float, boolean;
+    returntype: int, boolean, float, void;
+    import: java.util.*;
 }
 
 # declaring all clauses that MUST be on my java file
 requires{
-    #type: int, void, float;
+    type: int, void, float;
     loop: while;
 }
