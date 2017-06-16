@@ -241,7 +241,7 @@ public class RequiresVisitor implements Visitor<Void, Void> {
 				if (decl.contains(ar.arg)){
 					accept = true;
 				}
-				if (ar.arg.equals(decl)){
+				if (ar.arg.contains(decl)){
 					accept = true;
 				}
 			}
