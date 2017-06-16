@@ -233,10 +233,21 @@ public class RequiresVisitor implements Visitor<Void, Void> {
                 super.visit(n, null);
             }
 		}.visit(compilationUnit, null);
-		for (JavaArgs arg: clause.args){
-            if (!declimports.contains(arg.arg)){
-            	errors.add("[jRestrict] " + filename + " does not contain required " + clause.type + " (" + arg.arg + ")");
-            }
+
+		boolean accept;
+		for (String decl: declimports){
+			accept = false;
+			for (JavaArgs ar: clause.args){
+				if (decl.contains(ar.arg)){
+					accept = true;
+				}
+				if (ar.arg.equals(decl)){
+					accept = true;
+				}
+			}
+			if (!accept){
+				errors.add("[jRestrict] " + this.filename + " contains a non specified " + clause.type + " (" + decl + ")");
+			}
 		}
 		return null;
 	}
@@ -298,11 +309,13 @@ public class RequiresVisitor implements Visitor<Void, Void> {
                 super.visit(n, null);
             }
             @Override
-            public void visit(FieldDeclaration n, Object xxx) {           	
-            	Expression value = n.getVariables().get(0).getInitializer().get();
-            	Expression target = new NameExpr(n.getVariables().get(0).getName());
-            	AssignExpr a = new AssignExpr(target, value, Operator.ASSIGN);
-                super.visit(a, null);
+            public void visit(FieldDeclaration n, Object xxx) { 
+            	if (n.getVariables().get(0).getInitializer().isPresent()){
+            		Expression value = n.getVariables().get(0).getInitializer().get();
+            		Expression target = new NameExpr(n.getVariables().get(0).getName());
+            		AssignExpr a = new AssignExpr(target, value, Operator.ASSIGN);
+                	super.visit(a, null);
+            	}
             }
 		}.visit(compilationUnit, null);
 		for (JavaArgs arg: clause.args){
