@@ -1,0 +1,21 @@
+files {
+	Foo.java;
+}
+
+requires {
+	operator: +, -;
+	type: void;
+}
+
+prohibits {
+	type: Object;
+	returntype: boolean;
+}
+
+encloses {
+	import: java.util.*;
+	type: int, boolean, void, float, double, Integer, Object, String;
+	operator: ==, +=, *=, -=, /=, >, <;
+	loop: while, for;
+	branch: if;
+}
