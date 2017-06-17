@@ -68,6 +68,6 @@ A special clause ``file{ <file1.java>; <file2.java>; ... }`` has been added to t
 ## Analysis
 
 
-You can't both require and prohibit the same clause
-You can't require a clause that has been restricted by encloses
-You can't prohibit a clause that has been restricted by encloses
+You can't both require and prohibit the same clause (check - RequiresBindingVisitor)
+You can't require a clause that has been restricted by encloses (check - RequiresBindingVisitor)
+You can't prohibit a clause that has been restricted by encloses (check - ProhibitsBindingVisitor)

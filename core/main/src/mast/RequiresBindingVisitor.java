@@ -46,31 +46,11 @@ public class RequiresBindingVisitor implements Visitor<Void, Void> {
 	
 	@Override
 	public Void visit(CommandProhibits cmd, Void ctx) {
-		/*CommandSymbol cm = this.sRequires.resolve(cmd.clause.type);
-		if (cm != null){
-			for (JavaArgs arg: cm.clause.args){
-				if (cmd.clause.args.toString().contains(arg.arg)){
-					errors.add("[ERROR] You're prohibiting and requiring the usage of the same clause (" + cmd.clause.type + ": "+ arg.arg + ")." );
-				}
-			}
-		}
-		if (cmd.clause.type.toString().equals("type")){
-			this.cms = this.sRequires;
-			this.visit((ClauseType)cmd.clause, ctx);
-		}*/
 		return null;
 	}
 
 	@Override
 	public Void visit(CommandEncloses cmd, Void ctx) {
-		/*CommandSymbol cm = this.sProhibits.resolve(cmd.clause.type);
-		if (cm != null){
-			for (JavaArgs arg: cm.clause.args){
-				if (!cmd.clause.args.toString().contains(arg.arg)){
-					errors.add("[ERROR] You're prohibiting a clause that's not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + ")." );
-				}
-			}
-		}*/
 		return null;
 	}
 	

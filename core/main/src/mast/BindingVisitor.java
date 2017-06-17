@@ -35,7 +35,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		this.sProhibits = script.sProhibits;
 		this.sRequires  = script.sRequires;
 		script.visit(new RequiresBindingVisitor(errors), ctx); //visit requires for syntax analysis
-		//script.visit(new ProhibitsBindingVisitor(errors), ctx);
+		script.visit(new ProhibitsBindingVisitor(errors), ctx);
 		//script.visit(new EnclosesBindingVisitor(errors), ctx); 
 		if (errors.size() == 0){
 			script.visit(new ProhibitsVisitor(errors), ctx);
