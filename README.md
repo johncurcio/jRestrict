@@ -64,3 +64,11 @@ A special clause ``file{ <file1.java>; <file2.java>; ... }`` has been added to t
 ``loop: <java-loop>;`` - restricts the usage of loop, break and continue.
 
 ``branch: <java-branch>;`` - restricts the usage of if and switch. 
+
+## Analysis
+
+
+You can't both require and prohibit the same clause
+You can't require a clause that has been restricted by encloses
+You can't prohibit a clause that has been restricted by encloses
+
