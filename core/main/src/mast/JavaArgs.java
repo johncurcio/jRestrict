@@ -20,7 +20,7 @@ public abstract class JavaArgs extends Node {
 	   }
 	   if(o instanceof JavaArgs){
 		   JavaArgs other = (JavaArgs) o;
-	       return this.arg == other.arg;
+	       return this.arg.equals(other.arg);
 	   }
 	   return false;
 	}

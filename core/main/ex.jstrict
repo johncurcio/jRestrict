@@ -3,11 +3,17 @@ files {
 }
 
 requires {
-	import: java.applet.aa;
+	import: java.applet.asa;
+	type: int;
+	returntype: jdksah;
 }
 
 prohibits {
 	import: java.applet.iai;
+	loop: for;
+	modifier: static;
+	operator: =;
+	returntype: int;
 }
 
 encloses {
@@ -16,4 +22,5 @@ encloses {
 	operator: ==, +=, *=, -=, /=, >, <;
 	loop: while, for;
 	branch: if;
+	modifier: protected, private;
 }
