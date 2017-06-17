@@ -331,11 +331,13 @@ public class EnclosesVisitor implements Visitor<Void, Void> {
                 super.visit(n, null);
             }
             @Override
-            public void visit(FieldDeclaration n, Object xxx) {           	
-            	Expression value = n.getVariables().get(0).getInitializer().get();
-            	Expression target = new NameExpr(n.getVariables().get(0).getName());
-            	AssignExpr a = new AssignExpr(target, value, Operator.ASSIGN);
-                super.visit(a, null);
+            public void visit(FieldDeclaration n, Object xxx) { 
+            	if (n.getVariables().get(0).getInitializer().isPresent()){
+            		Expression value = n.getVariables().get(0).getInitializer().get();
+            		Expression target = new NameExpr(n.getVariables().get(0).getName());
+            		AssignExpr a = new AssignExpr(target, value, Operator.ASSIGN);
+                	super.visit(a, null);
+            	}
             }
 		}.visit(compilationUnit, null);
 		for (peg.Pair<String, String> decl: decloperators){
