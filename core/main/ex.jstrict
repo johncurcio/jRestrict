@@ -3,17 +3,15 @@ files {
 }
 
 requires {
-	operator: +, -;
-	type: void;
+	import: java.applet.aa;
 }
 
 prohibits {
-	type: Object;
-	returntype: boolean;
+	import: java.applet.iai;
 }
 
 encloses {
-	import: java.util.*;
+	import: java.util.HashSet, java.applet.asa;
 	type: int, boolean, void, float, double, Integer, Object, String;
 	operator: ==, +=, *=, -=, /=, >, <;
 	loop: while, for;

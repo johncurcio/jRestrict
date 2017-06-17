@@ -10,7 +10,7 @@ public class JavaImport extends JavaArgs {
 	}
 	
 	public String toString(){
-		return this.arg + this.reg;
+		return this.arg;
 	}
 	
 	public boolean isPackage(){

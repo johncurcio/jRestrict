@@ -65,7 +65,8 @@ public class BindingVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(CommandRequires cmd, Void ctx) {
-		CommandSymbol cm = this.sEncloses.resolve(cmd.clause.type);
+		cmd.clause.visit(this, ctx);		
+		/*CommandSymbol cm = this.sEncloses.resolve(cmd.clause.type);
 		if (cm != null){
 			for (JavaArgs arg: cmd.clause.args){
 				if (!cm.clause.args.toString().contains(arg.arg)){
@@ -77,13 +78,13 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		if (cmd.clause.type.toString().equals("type")){
 			this.cms = this.sProhibits;
 			this.visit((ClauseType)cmd.clause, ctx);
-		}
+		}*/
 		return null;
 	}
 	
 	@Override
 	public Void visit(CommandProhibits cmd, Void ctx) {
-		CommandSymbol cm = this.sRequires.resolve(cmd.clause.type);
+		/*CommandSymbol cm = this.sRequires.resolve(cmd.clause.type);
 		if (cm != null){
 			for (JavaArgs arg: cm.clause.args){
 				if (cmd.clause.args.toString().contains(arg.arg)){
@@ -94,20 +95,20 @@ public class BindingVisitor implements Visitor<Void, Void> {
 		if (cmd.clause.type.toString().equals("type")){
 			this.cms = this.sRequires;
 			this.visit((ClauseType)cmd.clause, ctx);
-		}
+		}*/
 		return null;
 	}
 
 	@Override
 	public Void visit(CommandEncloses cmd, Void ctx) {
-		CommandSymbol cm = this.sProhibits.resolve(cmd.clause.type);
+		/*CommandSymbol cm = this.sProhibits.resolve(cmd.clause.type);
 		if (cm != null){
 			for (JavaArgs arg: cm.clause.args){
 				if (!cmd.clause.args.toString().contains(arg.arg)){
 					errors.add("[ERROR] You're prohibiting a clause that's not allowed to be used (" + cmd.clause.type + ": "+ arg.arg + ")." );
 				}
 			}
-		}
+		}*/
 		return null;
 	}
 
@@ -118,7 +119,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 
 	@Override
 	public Void visit(ClauseType clause, Void ctx) {
-		CommandSymbol vartype = this.cms.resolve("vartype");
+		/*CommandSymbol vartype = this.cms.resolve("vartype");
 		CommandSymbol returntype = this.cms.resolve("returntype");
 		if (vartype != null){
 			for (JavaArgs arg: vartype.clause.args){
@@ -134,7 +135,7 @@ public class BindingVisitor implements Visitor<Void, Void> {
 				}
 			}
 		}
-		
+		*/
 		return null;
 	}
 
@@ -152,9 +153,47 @@ public class BindingVisitor implements Visitor<Void, Void> {
 	public Void visit(ClauseBranch clause, Void ctx) {
 		return null;
 	}
-
+	
 	@Override
 	public Void visit(ClauseImport clause, Void ctx) {
+		CommandSymbol enclosesImport  = this.sEncloses.resolve(clause.type);
+		CommandSymbol prohibitsImport = this.sProhibits.resolve(clause.type);
+		boolean errorFound;
+		String error = "";
+		if (enclosesImport != null){
+			for (JavaArgs importarg: clause.args){
+				errorFound = true;
+				error = "";
+				for (JavaArgs encimport: enclosesImport.clause.args){
+					error = "[ERROR] Requiring an " + clause.type + " not allowed to be used by encloses:\n"
+					      + "        requires has [" + importarg.arg + "] but encloses only allows "+ enclosesImport.clause.args.toString()+".";						
+					if (encimport.equals(importarg) || importarg.arg.contains(encimport.arg)){
+						errorFound = false;
+						break;
+					}
+				}
+				if (errorFound){
+					errors.add(error);
+				}
+			}
+		}
+		if (prohibitsImport != null){
+			for (JavaArgs importarg: clause.args){
+				errorFound = false;
+				error = "";
+				for (JavaArgs pbimport: prohibitsImport.clause.args){
+					error = "[ERROR] Requiring an " + clause.type + " that has been prohibited from use:\n"
+					      + "        requires [" + importarg.arg + "] conflicts with prohibits ["+ pbimport.arg +"].";						
+					if (pbimport.equals(importarg) || importarg.arg.contains(pbimport.arg) || pbimport.arg.contains(importarg.arg)){
+						errorFound = true;
+						break;
+					}
+				}
+				if (errorFound){
+					errors.add(error);
+				}
+			}
+		}
 		return null;
 	}
 
