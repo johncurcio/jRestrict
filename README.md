@@ -2,7 +2,7 @@
 
 jRestrict is a tiny language built to restrict ``.java`` files into using only what's specified in a simple ``.jstrict`` script. The script has 3 main commands:
 
-1. ``requires`` - specifies clauses that has to be in the java code for it to be valid. If a single clause is not in the java code, then an error is thrown. 
+1. ``requires`` - specifies clauses that has to be in the java code for it to be valid. If a single clause is not in the java code then an error is thrown. 
 2. ``encloses`` - specifies the list of clauses that can be in the java code. The code may not include all clauses, but it can only include the clauses specified here.
 3. ``prohibits`` - specifies a list of clauses which may not be in the java code. If any clause specified here is found in the code, then an error is thrown.  
 
@@ -67,7 +67,13 @@ A special clause ``file{ <file1.java>; <file2.java>; ... }`` has been added to t
 
 ## Analysis
 
+You can't both require and prohibit the same clause; 
+You can't require a clause that has been restricted by encloses;
+You can't prohibit a clause that has been restricted by encloses.
 
-You can't both require and prohibit the same clause (check - RequiresBindingVisitor)
-You can't require a clause that has been restricted by encloses (check - RequiresBindingVisitor)
-You can't prohibit a clause that has been restricted by encloses (check - ProhibitsBindingVisitor)
+## How to use it
+
+To use jRestrict, you can add the ``core/`` folder to your eclipse project and then add the provided ``core/main/javaparser-core-3.2.6.jar`` to your classpath.
+
+
+
