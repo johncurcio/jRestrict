@@ -40,7 +40,7 @@ public class ScriptDriver {
 		String fname = args[0];
 		peg.Pair<mast.Script, List<String>> m = read(fname);
 		if (m != null){
-			System.out.println("The jscript has successfully validated all java files");
+			System.out.println("The jscript has successfully validated all java files!");
 			System.out.println("\n>>>>>>>>>> Script <<<<<<<<<<<");
 			System.out.println(m.x.toString());
 		}
