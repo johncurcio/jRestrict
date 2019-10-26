@@ -1,6 +1,6 @@
 # jRestrict
 
-jRestrict is a tiny language built to restrict ``.java`` files into using only what's specified in a simple ``.jstrict`` script. The script has 3 main commands:
+jRestrict is a dsl built to restrict ``.java`` files into using only what's specified in a simple ``.jstrict`` script. The script has 3 main commands:
 
 1. ``requires`` - specifies clauses that has to be in the java code for it to be valid. If a single clause is not in the java code then an error is thrown. 
 2. ``encloses`` - specifies the list of clauses that can be in the java code. The code may not include all clauses, but it can only include the clauses specified here.
